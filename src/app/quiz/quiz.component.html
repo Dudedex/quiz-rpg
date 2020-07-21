@@ -1,55 +1,53 @@
-<div class="game-container">
-	<div class="w-100">
-		<div class="section" *ngIf="isUsernameStep()">
-			<ngb-alert [type]="'warning'" *ngIf="showWarning" (close)="showWarning = false">
-				Bitte einen Benutzernamen mit 3 oder mehr Buchstaben angeben
-			</ngb-alert>
-			<ngb-alert [type]="'danger'" *ngIf="showUsernameError" (close)="showUsernameError = false">
-				Der angegebene Benutzername ist nicht mehr verfügbar
-			</ngb-alert>
-			<input class="w-100" type="text" [(ngModel)]="username" [placeholder]="'Benutzername...'">
-			<div class="mt-0-5">
-				<button class="btn btn-primary w-100" (click)="progressQuiz()">Anmelden</button>
+<div class="container">
+	<div class="col-xs-12 mt-3" *ngIf="isUsernameStep()">
+		<ngb-alert [type]="'warning'" *ngIf="showWarning" (close)="showWarning = false">
+			Bitte einen Benutzernamen mit 3 oder mehr Buchstaben angeben
+		</ngb-alert>
+		<ngb-alert [type]="'danger'" *ngIf="showUsernameError" (close)="showUsernameError = false">
+			Der angegebene Benutzername ist nicht mehr verfügbar
+		</ngb-alert>
+		<input class="w-100" type="text" [(ngModel)]="username" [placeholder]="'Benutzername...'">
+		<div class="mt-2">
+			<button class="btn btn-primary w-100" (click)="progressQuiz()">Anmelden</button>
+		</div>
+	</div>
+	<div class="col-xs-12 mt-3" *ngIf="isLobbySelectionStep()">
+		<ngb-alert [type]="'warning'" *ngIf="showWarning" (close)="showWarning = false">
+			Bitte eine Lobby angeben
+		</ngb-alert>
+		<ngb-alert [type]="'danger'" *ngIf="showLobbyError" (close)="showUsernameError = showLobbyError">
+			Die Lobby ist nicht mehr verfügbar oder befindet sich noch im Spiel
+		</ngb-alert>
+		<input class="w-100" type="text" [(ngModel)]="lobby" [placeholder]="'https://...'">
+		<div class="mt-2">
+			<button class="btn btn-primary w-100" (click)="progressQuiz()">Lobby beitreten</button>
+		</div>
+	</div>
+	<div class="col-xs-12 mt-3" *ngIf="isWaitForStart()">
+		<ngb-alert [type]="'warning'" *ngIf="!startTime" [dismissible]="false">
+			<div class="text-center">Warte auf Host</div>
+		</ngb-alert>
+		<ngb-alert [type]="'success'"*ngIf="startTime" [dismissible]="false">
+			<div class="text-center"><strong>{{waitTime}}</strong></div>
+		</ngb-alert>
+		<ul class="list-group mb-1" *ngIf="players">
+			<li class="list-group-item" *ngFor="let player of players">{{player}}</li>
+		</ul>
+		<button class="btn btn-secondary mt-3 w-100" (click)="quitLobby()">Lobby verlassen</button>
+	</div>
+	<div class="col-xs-12 mt-3" *ngIf="isQuizStep()">
+		<app-question
+				[question]="getCurrentQuestion()"
+				(questionCorrect)="validateQuiz()"></app-question>
+	</div>
+	<div class="col-xs-12 mt-3" *ngIf="isEndLobbyStep()">
+		<ngb-alert [type]="'success'" [dismissible]="false">
+			Gratulation!
+			<div>
+				<strong>Du habe fertig!</strong>
 			</div>
-		</div>
-		<div class="section" *ngIf="isLobbySelectionStep()">
-			<ngb-alert [type]="'warning'" *ngIf="showWarning" (close)="showWarning = false">
-				Bitte eine Lobby angeben
-			</ngb-alert>
-			<ngb-alert [type]="'danger'" *ngIf="showLobbyError" (close)="showUsernameError = showLobbyError">
-				Die Lobby ist nicht mehr verfügbar oder befindet sich noch im Spiel
-			</ngb-alert>
-			<input class="w-100" type="text" [(ngModel)]="lobby" [placeholder]="'https://...'">
-			<div class="mt-0-5">
-				<button class="btn btn-primary w-100" (click)="progressQuiz()">Lobby beitreten</button>
-			</div>
-		</div>
-		<div class="section" *ngIf="isWaitForStart()">
-			<ngb-alert [type]="'warning'" *ngIf="!startTime" [dismissible]="false">
-				<div class="text-center">Warte auf Host</div>
-			</ngb-alert>
-			<ngb-alert [type]="'success'"*ngIf="startTime" [dismissible]="false">
-				<div class="text-center"><strong>{{waitTime}}</strong></div>
-			</ngb-alert>
-			<ul class="list-group mb-1" *ngIf="players">
-				<li class="list-group-item" *ngFor="let player of players">{{player}}</li>
-			</ul>
-			<button class="btn btn-secondary mt-1 w-100" (click)="quitLobby()">Lobby verlassen</button>
-		</div>
-		<div class="section" *ngIf="isQuizStep()">
-			<app-question
-					[question]="getCurrentQuestion()"
-					(questionCorrect)="validateQuiz()"></app-question>
-		</div>
-		<div class="section" *ngIf="isEndLobbyStep()">
-			<ngb-alert [type]="'success'" [dismissible]="false">
-				Gratulation!
-				<div>
-					<strong>Du habe fertig!</strong>
-				</div>
-			</ngb-alert>
-			<button class="btn btn-secondary w-100" (click)="progressQuiz()">Spiel verlassen</button>
-		</div>
+		</ngb-alert>
+		<button class="btn btn-secondary w-100" (click)="progressQuiz()">Spiel verlassen</button>
 	</div>
 </div>
 
