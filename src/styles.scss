@@ -1,1 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
+.game-container {
+    width: 600px;
+    margin: auto;
+    padding: 0.5rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+@function str-replace($string, $search, $replace: '') {
+    $index: str-index($string, $search);
+
+    @if $index {
+        @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+    }
+
+    @return $string;
+}
+
+$types: ('margin', 'padding');
+$sides: ('', '-top', '-bottom', '-left', '-right');
+$spaces: ('0', '0-5', '1', '1-5', '2', '2-5', '3', '4');
+
+@each $type in $types {
+    @each $side in $sides {
+        @each $space in $spaces {
+            .#{str-slice($type, 0, 1)}#{str-slice($side, 2, 2)}-#{$space} {
+                #{$type}#{$side}: #{str-replace($space, '-', '.')}#{if($space == '0', unquote(''), rem)} !important;
+            }
+        }
+    }
+}
+
+$widths: ('0', '10', '20', '25', '30', '40', '50', '60', '70', '75', '80', '90', '100');
+
+@each $width in $widths {
+    .w-#{$width} {
+        width: #{$width}#{unquote('%')} !important;
+    }
+}
+
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';

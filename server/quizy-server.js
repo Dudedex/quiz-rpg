@@ -69,10 +69,11 @@ app.post('/:gameId/finished', function (req, res) {
     res.send();
 });
 
-app.get('/admin/:gameId/start', function (req, res) {
+app.post('/admin/start/:gameId', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
-        || games[gameId] === undefined) {
+        || games[gameId] === undefined
+        || games[gameId].startTime !== 0) {
         res.status(400).send();
         return;
     }
@@ -87,22 +88,27 @@ app.post('/admin/registerGame', function (req, res) {
         res.status(400).send();
         return;
     }
-    addGame(gameId);
+    addOrClearGame(gameId, false);
     res.send();
 });
 
-app.post('/admin/clearGame', function (req, res) {
-    //TODO
-
+app.post('/admin/clearGame/:gameId', function (req, res) {
+    const gameId = req.params.gameId;
+    if (gameId === undefined
+        || games[gameId] === undefined) {
+        res.status(404).send();
+        return;
+    }
+    addOrClearGame(gameId, true)
 });
 
 app.listen(port, function () {
     console.log('Dummy quiz-server listening on port ' +  port +'!');
-    addGame('test');
+    addOrClearGame('test', false);
 });
 
-function addGame(gameId) {
-    if (games[gameId] !== undefined) {
+function addOrClearGame(gameId, isClear) {
+    if (games[gameId] !== undefined && !isClear) {
         return false;
     }
     games[gameId] = {};

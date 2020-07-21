@@ -7,6 +7,7 @@ import {QuizComponent} from './quiz/quiz.component';
 import {FormsModule} from '@angular/forms';
 import {ApiClientService} from './api-client.service';
 import {HttpClientModule} from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import {HttpClientModule} from '@angular/common/http';
     imports: [
         BrowserModule,
         FormsModule,
-        HttpClientModule
+        HttpClientModule,
+        NgbModule
     ],
     providers: [ApiClientService],
     bootstrap: [AppComponent]

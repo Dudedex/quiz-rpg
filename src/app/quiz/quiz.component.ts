@@ -7,8 +7,7 @@ import {interval, Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-quiz',
-    templateUrl: './quiz.component.html',
-    styleUrls: ['./quiz.component.sass']
+    templateUrl: './quiz.component.html'
 })
 export class QuizComponent implements OnInit {
 
@@ -16,7 +15,7 @@ export class QuizComponent implements OnInit {
     public lobby: string = 'http://localhost:3000/test';
     public showLobbyError: boolean;
     public showUsernameError: boolean;
-    public showError: boolean;
+    public showWarning: boolean;
     public startTime: number;
     public startSubscription: Subscription;
     public waitTime: number;
@@ -64,10 +63,10 @@ export class QuizComponent implements OnInit {
 
     public progressQuiz() {
         if (!this.validateStep()) {
-            this.showError = true;
+            this.showWarning = true;
             return;
         }
-        this.showError = false;
+        this.showWarning = false;
 
         switch (this.quizSteps[this.currentStep]) {
             case QuizStep.LOBBY_SELECTION:
@@ -85,6 +84,7 @@ export class QuizComponent implements OnInit {
                                 this.showLobbyError = true;
                             } else {
                                 this.showUsernameError = true;
+                                this.currentStep = 0;
                             }
                         }
                 );
