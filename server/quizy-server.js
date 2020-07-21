@@ -22,7 +22,8 @@ app.get('/:gameId', function (req, res) {
         time = 0;
     }
     res.send({
-        startTime: time
+        startTime: time,
+        players: games[gameId].players
     });
 });
 
@@ -60,7 +61,7 @@ app.post('/:gameId/finished', function (req, res) {
         res.status(400).send();
         return;
     }
-    console.log('Player "' + username + '" finished the game in (' + Date.now() - games[gameId].startTime + ' ms)');
+    console.log('Player "' + username + '" finished the game in (' + (Date.now() - games[gameId].startTime) + ' ms)');
     games[gameId].gameStats.push({
         username,
         finishedTime: Date.now(),
@@ -99,7 +100,8 @@ app.post('/admin/clearGame/:gameId', function (req, res) {
         res.status(404).send();
         return;
     }
-    addOrClearGame(gameId, true)
+    addOrClearGame(gameId, true);
+    res.send();
 });
 
 app.listen(port, function () {

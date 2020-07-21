@@ -19,6 +19,7 @@ export class QuizComponent implements OnInit {
     public startTime: number;
     public startSubscription: Subscription;
     public waitTime: number;
+    public players: string[];
 
     private currentStep: QuizStep;
     private quizSteps: QuizStep[] = [
@@ -99,6 +100,7 @@ export class QuizComponent implements OnInit {
         if (this.quizSteps[this.currentStep] !== QuizStep.WAIT_FOR_START) {
             return;
         }
+
         this.startSubscription.unsubscribe();
         this.currentStep -= 1;
     }
@@ -158,8 +160,8 @@ export class QuizComponent implements OnInit {
             this.startSubscription = interval(500).subscribe(() => {
                 if (!this.blockCall) {
                     this.apiClient.checkStartTime(this.lobby).subscribe((res: any) => {
-                        console.log(res);
                         this.startTime = res.startTime as number;
+                        this.players = res.players;
                         const now = new Date().getTime();
                         if (this.startTime > now) {
                             this.startSubscription.unsubscribe();

@@ -31,7 +31,10 @@
 			<ngb-alert [type]="'success'"*ngIf="startTime" [dismissible]="false">
 				<div class="text-center"><strong>{{waitTime}}</strong></div>
 			</ngb-alert>
-			<button class="btn btn-secondary w-100" (click)="quitLobby()">Lobby verlassen</button>
+			<ul class="list-group mb-1" *ngIf="players">
+				<li class="list-group-item" *ngFor="let player of players">{{player}}</li>
+			</ul>
+			<button class="btn btn-secondary mt-1 w-100" (click)="quitLobby()">Lobby verlassen</button>
 		</div>
 		<div class="section" *ngIf="isQuizStep()">
 			<app-question
