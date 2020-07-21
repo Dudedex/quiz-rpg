@@ -1,0 +1,23 @@
+<div class="question-container" *ngIf="question">
+    <h5>{{question.title}}</h5>
+    <div class="error-penalty" *ngIf="errorPenalty">
+        Falsche Antwort!
+        Noch {{seconds}} warten!
+    </div>
+    <div class="content" *ngFor="let option of question.options; index as i">
+        <ng-container *ngIf="isCheckboxType()">
+            <label for="question_{{i}}">
+                <input type="checkbox" id="question_{{i}}" [(ngModel)]="option.checked">
+                {{option.text}}
+            </label>
+        </ng-container>
+        <ng-container *ngIf="isRadioType()">
+          <button class="option-btn" (click)="checkRadioOption(option)">
+              {{option.text}}
+          </button>
+        </ng-container>
+    </div>
+    <button *ngIf="isCheckboxType()" (click)="checkCheckboxOptions()">
+        Antwort abgeben
+    </button>
+</div>

@@ -1,0 +1,38 @@
+<div class="section" *ngIf="isUsernameStep()">
+    <div *ngIf="showError">
+        Bitte einen Benutzernamen mit 3 oder mehr Buchstaben angeben
+    </div>
+    <input type="text" [(ngModel)]="userName">
+    <button (click)="progressQuiz()">Anmelden</button>
+</div>
+<div class="section" *ngIf="isLobbySelectionStep()">
+    <div *ngIf="showError">
+        Bitte eine Lobby angeben
+    </div>
+    <input type="text" [(ngModel)]="lobby">
+    <button (click)="progressQuiz()">Lobby beitreten</button>
+</div>
+<div class="section" *ngIf="isWaitForStart()">
+    <div *ngIf="!startTime">
+        Warte auf Host
+    </div>
+    <div *ngIf="startTime">
+        {{waitTime}}
+    </div>
+    <button (click)="quitLobby()">Lobby verlassen</button>
+</div>
+<div class="section" *ngIf="isQuizStep()">
+    <app-question
+            [question]="getCurrentQuestion()"
+            (questionCorrect)="validateQuiz()"></app-question>
+</div>
+<div class="section" *ngIf="isEndLobbyStep()">
+    <div>
+        Gratulation!
+    </div>
+    <h4>Du habe fertig!</h4>
+    <button (click)="progressQuiz()">Spiel verlassen</button>
+</div>
+
+
+
