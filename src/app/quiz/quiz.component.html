@@ -2,13 +2,19 @@
     <div *ngIf="showError">
         Bitte einen Benutzernamen mit 3 oder mehr Buchstaben angeben
     </div>
-    <input type="text" [(ngModel)]="userName">
+    <input type="text" [(ngModel)]="username">
     <button (click)="progressQuiz()">Anmelden</button>
 </div>
 <div class="section" *ngIf="isLobbySelectionStep()">
     <div *ngIf="showError">
         Bitte eine Lobby angeben
     </div>
+	<div *ngIf="showUsernameError">
+		Der angegebene Benutzername ist nicht mehr verfügbar
+	</div>
+	<div *ngIf="showLobbyError">
+		Die Lobby ist nicht mehr verfügbar oder befindet sich noch im Spiel
+	</div>
     <input type="text" [(ngModel)]="lobby">
     <button (click)="progressQuiz()">Lobby beitreten</button>
 </div>

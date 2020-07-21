@@ -5,7 +5,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Node dummy server
 `cd server`
 and start the node server via
-`node quizy-server <game-id>`
+`node quizy-server <port (optional => default is 3000)>`
 
 ## Angular Development server
 

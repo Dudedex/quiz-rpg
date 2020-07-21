@@ -6,14 +6,16 @@ import {QuizStep} from '../models/quiz-step';
 import {interval, Subscription} from 'rxjs';
 
 @Component({
-  selector: 'app-quiz',
-  templateUrl: './quiz.component.html',
-  styleUrls: ['./quiz.component.sass']
+    selector: 'app-quiz',
+    templateUrl: './quiz.component.html',
+    styleUrls: ['./quiz.component.sass']
 })
 export class QuizComponent implements OnInit {
 
-    public userName: string;
-    public lobby: string = 'http://e90bc05a0b38.ngrok.io/';
+    public username: string;
+    public lobby: string = 'http://localhost:3000/test';
+    public showLobbyError: boolean;
+    public showUsernameError: boolean;
     public showError: boolean;
     public startTime: number;
     public startSubscription: Subscription;
@@ -38,7 +40,6 @@ export class QuizComponent implements OnInit {
     ngOnInit() {
         this.quiz = TestQuiz.getQuizObject();
         this.index = 0;
-
     }
 
     public isUsernameStep() {
@@ -67,36 +68,30 @@ export class QuizComponent implements OnInit {
             return;
         }
         this.showError = false;
-        if (this.currentStep < this.quizSteps.length - 1) {
-            this.currentStep += 1;
-        } else {
-            this.currentStep = QuizStep.LOBBY_SELECTION;
-            this.blockCall = false;
-            this.startTime = 0;
-            return;
-        }
-        if (this.quizSteps[this.currentStep] === QuizStep.WAIT_FOR_START) {
-            this.startSubscription = interval(500).subscribe(() => {
-                if (!this.blockCall) {
-                    this.apiClient.checkStartTime(this.lobby).subscribe((res: any) => {
-                        console.log(res);
-                        this.startTime = res.startTime as number;
-                        const now = new Date().getTime();
-                        if (this.startTime > now) {
-                            this.startSubscription.unsubscribe();
-                            this.blockCall = true;
-                            this.startWaitTimer(Math.ceil((this.startTime - now) / 1000));
-                            setTimeout(() => {
-                                this.progressQuiz();
-                            }, this.startTime - new Date().getTime());
-                        }
-                    });
+
+        switch (this.quizSteps[this.currentStep]) {
+            case QuizStep.LOBBY_SELECTION:
+                if (!this.lobby.endsWith('/')) {
+                    this.lobby = this.lobby + '/';
                 }
-            });
-        } else {
-            if (this.startSubscription) {
-                this.startSubscription.unsubscribe();
-            }
+                this.apiClient.registerPlayer(this.lobby, this.username).subscribe(
+                        () => {
+                            this.showLobbyError = false;
+                            this.showUsernameError = false;
+                            this.progressToNextStep();
+                        },
+                        (error) => {
+                            if (error.status === 404) {
+                                this.showLobbyError = true;
+                            } else {
+                                this.showUsernameError = true;
+                            }
+                        }
+                );
+                break;
+            default:
+                this.progressToNextStep();
+                break;
         }
     }
 
@@ -133,7 +128,7 @@ export class QuizComponent implements OnInit {
             return;
         }
         this.apiClient.quizFinished(this.lobby, {
-            user: this.userName
+            username: this.username
         }).subscribe(() => {
             this.currentStep += 1;
         });
@@ -141,12 +136,47 @@ export class QuizComponent implements OnInit {
 
     private validateStep() {
         switch (this.quizSteps[this.currentStep]) {
-            case QuizStep.USERNAME:
-                return this.userName && this.userName.trim() !== '' && this.userName.trim().length > 2;
-            case QuizStep.LOBBY_SELECTION:
-                return this.lobby && this.lobby.trim() !== '';
+        case QuizStep.USERNAME:
+            return this.username && this.username.trim() !== '' && this.username.trim().length > 2;
+        case QuizStep.LOBBY_SELECTION:
+            return this.lobby && this.lobby.trim() !== '';
         }
         return true;
+    }
+
+    private progressToNextStep() {
+        if (this.currentStep < this.quizSteps.length - 1) {
+            this.currentStep += 1;
+        } else {
+            this.currentStep = QuizStep.LOBBY_SELECTION;
+            this.blockCall = false;
+            this.startTime = 0;
+            return;
+        }
+
+        if (this.quizSteps[this.currentStep] === QuizStep.WAIT_FOR_START) {
+            this.startSubscription = interval(500).subscribe(() => {
+                if (!this.blockCall) {
+                    this.apiClient.checkStartTime(this.lobby).subscribe((res: any) => {
+                        console.log(res);
+                        this.startTime = res.startTime as number;
+                        const now = new Date().getTime();
+                        if (this.startTime > now) {
+                            this.startSubscription.unsubscribe();
+                            this.blockCall = true;
+                            this.startWaitTimer(Math.ceil((this.startTime - now) / 1000));
+                            setTimeout(() => {
+                                this.progressQuiz();
+                            }, this.startTime - new Date().getTime());
+                        }
+                    });
+                }
+            });
+        } else {
+            if (this.startSubscription) {
+                this.startSubscription.unsubscribe();
+            }
+        }
     }
 
 }
