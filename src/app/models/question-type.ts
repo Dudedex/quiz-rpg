@@ -1,4 +1,5 @@
 export enum QuestionType {
   CHECKBOX,
-  RADIO
+  RADIO,
+  IMAGE_SEARCH
 }

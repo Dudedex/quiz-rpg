@@ -6,6 +6,10 @@
     text-align: center;
 }
 
+.max-width {
+    max-width: 100%;
+}
+
 @function str-replace($string, $search, $replace: '') {
     $index: str-index($string, $search);
 

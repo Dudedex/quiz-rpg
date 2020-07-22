@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Question} from '../models/question';
 import {AnswerOption} from '../models/answer-option';
 import {QuestionType} from '../models/question-type';
@@ -7,7 +7,7 @@ import {QuestionType} from '../models/question-type';
     selector: 'app-question',
     templateUrl: './question.component.html'
 })
-export class QuestionComponent implements OnInit {
+export class QuestionComponent implements OnInit, OnChanges {
 
     @Input()
     public question: Question;
@@ -23,6 +23,12 @@ export class QuestionComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.submitted = false;
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        this.errorPenalty = false;
+        this.seconds = undefined;
         this.submitted = false;
     }
 
@@ -55,6 +61,33 @@ export class QuestionComponent implements OnInit {
         return this.question.type === QuestionType.RADIO;
     }
 
+    public isImageSearch() {
+        return this.question.type === QuestionType.IMAGE_SEARCH;
+    }
+
+    public checkImage(event: any) {
+        console.log(event);
+        console.log(this.question.imageSearch);
+        console.log(this.question.imageSearch.left);
+        console.log(this.question.imageSearch.right);
+        console.log(this.question.imageSearch.top);
+        console.log(this.question.imageSearch.bottom);
+        console.log(this.question.imageSearch.left > event.screenX);
+        console.log(this.question.imageSearch.top < event.screenY);
+        console.log(this.question.imageSearch.right < event.screenX);
+        console.log(this.question.imageSearch.bottom > event.screenY);
+        if (this.question.imageSearch.left < event.screenX
+                || this.question.imageSearch.top < event.screenY
+                || this.question.imageSearch.right > event.screenX
+                || this.question.imageSearch.bottom > event.screenY) {
+            console.log('error');
+            this.startErrorTimer();
+        } else {
+            console.log('correct');
+            //this.questionAnsweredCorrectly();
+        }
+    }
+
     private startErrorTimer() {
         if (this.errorPenalty) {
             return;
@@ -78,9 +111,10 @@ export class QuestionComponent implements OnInit {
 
     private questionAnsweredCorrectly() {
         if (!this.submitted) {
-            console.log('submitting');
             this.submitted = true;
             this.questionCorrect.emit();
         }
     }
+
+
 }

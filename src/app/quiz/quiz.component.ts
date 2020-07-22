@@ -120,7 +120,6 @@ export class QuizComponent implements OnInit {
         if (!this.quiz) {
             return undefined;
         }
-        console.log(this.quiz.questions[this.index]);
         return this.quiz.questions[this.index];
     }
 

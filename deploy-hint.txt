@@ -1,4 +1,6 @@
 Build
 => ng build --prod --baseHref="https://dudedex.github.io/quiz-rpg/"
 Deploy
-=> ngh --message="Test deploy" --branch="deploy-branch"
+=> ngh --message="DEPLOY"
+Push
+=> git push
