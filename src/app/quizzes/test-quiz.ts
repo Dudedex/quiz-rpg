@@ -3,6 +3,7 @@ import {Question} from '../models/question';
 import {QuestionType} from '../models/question-type';
 import {AnswerOption} from '../models/answer-option';
 import {ImageSearch} from '../models/image-search';
+import {AreaData} from '../models/area-data';
 
 export class TestQuiz {
     public static getQuizObject(): Quiz {
@@ -50,13 +51,17 @@ export class TestQuiz {
             question.title = 'Finde das Objekt';
             question.type = QuestionType.IMAGE_SEARCH;
             question.searchedImage = new ImageSearch();
+
             question.searchedImage.width = 50;
             question.searchedImage.height = 50;
             question.imageSearch = new ImageSearch();
-             question.imageSearch.left = 950;
-            question.imageSearch.top = 275;
-            question.imageSearch.right = 1100;
-            question.imageSearch.bottom = 410;
+            question.imageSearch.areaData = [];
+            const areaData = new AreaData();
+            areaData.x1 = 1140;
+            areaData.y1 = 430;
+            areaData.x2 = 1300;
+            areaData.y2 = 600;
+            question.imageSearch.areaData.push(areaData);
 
             quiz.questions.push(question);
 

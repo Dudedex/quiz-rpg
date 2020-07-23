@@ -1,10 +1,8 @@
+import {AreaData} from './area-data';
 
 export class ImageSearch {
     public imageData: string;
-    public left: number;
-    public right: number;
-    public top: number;
-    public bottom: number;
+    public areaData: AreaData[];
     public width: number;
     public height: number;
 }

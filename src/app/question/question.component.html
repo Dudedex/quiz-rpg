@@ -19,7 +19,13 @@
         </ng-container>
     </div>
 	<ng-container *ngIf="isImageSearch()">
-		<img class="max-width" [src]="question.imageSearch.imageData" (click)="checkImage($event)" [alt]="'picture'">
+		<img class="max-width" [src]="question.imageSearch.imageData" [alt]="'picture'" usemap="#areaMap" (click)="coords($event)">
+		<map id="map_id" name="areaMap">
+			<ng-container *ngFor="let area of question.imageSearch.areaData">
+				<area [shape]="'rect'" [coords]="area.x1 + ',' + area.y1 + ',' + area.x2 + ',' + area.y2" (click)="areaClicked(area)">
+			</ng-container>
+
+		</map>
 	</ng-container>
     <button *ngIf="isCheckboxType()" (click)="checkCheckboxOptions()">
         Antwort abgeben
