@@ -19,4 +19,12 @@ export class ApiClientService {
     public registerPlayer(lobby: string, username: string) {
         return this.httpClient.post(lobby + 'registerPlayer', {username});
     }
+
+    public startGame(lobby: string) {
+        return this.httpClient.post(lobby + 'admin/startGame', {});
+    }
+
+    public clearGame(lobby: string) {
+        return this.httpClient.post(lobby + 'admin/clearGame', {});
+    }
 }

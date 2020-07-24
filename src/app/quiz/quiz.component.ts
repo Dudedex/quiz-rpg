@@ -12,7 +12,7 @@ import {interval, Subscription} from 'rxjs';
 export class QuizComponent implements OnInit {
 
     public username: string;
-    public lobby: string = 'http://localhost:3000/test';
+    public lobby: string = 'http://localhost:3000/test/';
     public showLobbyError: boolean;
     public showUsernameError: boolean;
     public showWarning: boolean;
@@ -133,6 +133,14 @@ export class QuizComponent implements OnInit {
         }).subscribe(() => {
             this.currentStep += 1;
         });
+    }
+
+    public startGame() {
+        this.apiClient.startGame(this.lobby).subscribe();
+    }
+
+    public clearGame() {
+        this.apiClient.clearGame(this.lobby).subscribe();
     }
 
     private validateStep() {

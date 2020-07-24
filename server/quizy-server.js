@@ -70,7 +70,7 @@ app.post('/:gameId/finished', function (req, res) {
     res.send();
 });
 
-app.post('/admin/start/:gameId', function (req, res) {
+app.post('/:gameId/admin/startGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined
@@ -82,8 +82,8 @@ app.post('/admin/start/:gameId', function (req, res) {
     res.send();
 });
 
-app.post('/admin/registerGame', function (req, res) {
-    const gameId = req.body.gameId;
+app.post('/:gameId/admin/registerGame', function (req, res) {
+    const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] !== undefined){
         res.status(400).send();
@@ -93,7 +93,7 @@ app.post('/admin/registerGame', function (req, res) {
     res.send();
 });
 
-app.post('/admin/clearGame/:gameId', function (req, res) {
+app.post('/:gameId/admin/clearGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined) {

@@ -10,6 +10,13 @@
     max-width: 100%;
 }
 
+img[usemap] {
+    border: none;
+    height: auto;
+    max-width: 100%;
+    width: auto;
+}
+
 @function str-replace($string, $search, $replace: '') {
     $index: str-index($string, $search);
 
@@ -19,6 +26,13 @@
 
     @return $string;
 }
+
+@media (min-width: 800px) {
+    body {
+        zoom: 1.25;
+    }
+}
+
 
 $widths: ('0', '10', '20', '25', '30', '40', '50', '60', '70', '75', '80', '90', '100');
 

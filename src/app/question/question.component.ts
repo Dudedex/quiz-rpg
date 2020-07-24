@@ -1,14 +1,17 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {Question} from '../models/question';
 import {AnswerOption} from '../models/answer-option';
 import {QuestionType} from '../models/question-type';
 import {AreaData} from '../models/area-data';
 
+
 @Component({
     selector: 'app-question',
     templateUrl: './question.component.html'
 })
-export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
+export class QuestionComponent implements OnInit, OnChanges {
+
+    @ViewChild('image') public image: ElementRef;
 
     @Input()
     public question: Question;
@@ -21,35 +24,6 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
     private submitted: boolean;
 
     constructor() {
-    }
-
-    private getImageMap(map): any {
-        const areas = map.getElementsByTagName('area');
-        const len = areas.length;
-        const coords = [];
-        let previousWidth = this.question.imageSearch.width;
-        for (let n = 0; n < len; n++) {
-            coords[n] = areas[n].coords.split(',');
-        }
-        window.onresize = () => {
-            const x = document.body.clientWidth / previousWidth;
-            for (let n = 0; n < len; n++) {
-                const clen = coords[n].length;
-                for (let m = 0; m < clen; m++) {
-                    coords[n][m] *= x;
-                }
-                areas[n].coords = coords[n].join(',');
-            }
-            previousWidth = document.body.clientWidth;
-            return true;
-        };
-    }
-
-    ngAfterViewInit(): void {
-        if (this.question.type === QuestionType.IMAGE_SEARCH) {
-            //this.getImageMap('map_id').resize();
-        }
-
     }
 
     ngOnInit() {
@@ -95,12 +69,30 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
         return this.question.type === QuestionType.IMAGE_SEARCH;
     }
 
-    public areaClicked(area: AreaData) {
-        console.log(area);
+    public areaClicked(area: AreaData, event: any) {
+        console.log(event);
+        console.log('Area clicked ' + area.description)
+        area.checked = true;
+        if (this.question.imageSearch.areaData.findIndex(ad => !ad.checked) === -1) {
+            this.questionAnsweredCorrectly();
+        }
     }
 
     public coords(event) {
         console.log(event);
+        console.log('x:' + (event.offsetX / this.image.nativeElement.width));
+        console.log('y:' + (event.offsetY / this.image.nativeElement.height));
+    }
+
+    public getCordsForArea(area: AreaData) {
+        switch (area.shape) {
+            case 'circle':
+                return area.x1 + ',' + area.y1 + ',' + area.radius;
+            case 'rect':
+                return area.x1 + ',' + area.y1 + ',' + area.x2 + ',' + area.y2;
+        }
+        console.error('Shape ' +  area.shape + ' has no handler yet');
+        return '';
     }
 
     private startErrorTimer() {

@@ -1,10 +1,16 @@
 <div class="question-container" *ngIf="question">
     <h5>{{question.title}}</h5>
-	<img *ngIf="question.searchedImage && question.searchedImage.imageData"
+	<img
+		 class="text-center mb-2"
+		 *ngIf="question.searchedImage && question.searchedImage.imageData"
 		 [src]="question.searchedImage.imageData"
 		 [width]="question.searchedImage.width"
-		 [height]="question.searchedImage.height"
 		 [alt]="'searched picture'">
+	<ng-container *ngIf="isImageSearch()">
+		<div *ngFor="let area of question.imageSearch.areaData">
+			- {{area.description}} {{area.checked ? '(gefunden)': ''}}
+		</div>
+	</ng-container>
     <div class="content" *ngFor="let option of question.options; index as i">
         <ng-container *ngIf="isCheckboxType()">
             <label for="question_{{i}}">
@@ -19,12 +25,21 @@
         </ng-container>
     </div>
 	<ng-container *ngIf="isImageSearch()">
-		<img class="max-width" [src]="question.imageSearch.imageData" [alt]="'picture'" usemap="#areaMap" (click)="coords($event)">
-		<map id="map_id" name="areaMap">
-			<ng-container *ngFor="let area of question.imageSearch.areaData">
-				<area [shape]="'rect'" [coords]="area.x1 + ',' + area.y1 + ',' + area.x2 + ',' + area.y2" (click)="areaClicked(area)">
-			</ng-container>
+		<div clas="responsive">
+			<img
+					#image
+					[width]="question.imageSearch.width"
+					[height]="question.imageSearch.height"
+					[src]="question.imageSearch.imageData"
+					[alt]="'picture'"
+					usemap="#areaMap"
+					(click)="coords($event)">
+		</div>
 
+		<map id="map_id" name="areaMap">
+			<ng-container *ngFor="let area of question.imageSearch.areaData; let i = index">
+				<area id="area_{{area.description}}" [alt]="'area_' + i" [shape]="area.shape" [coords]="getCordsForArea(area)" (click)="areaClicked(area, $event)" href="#">
+			</ng-container>
 		</map>
 	</ng-container>
     <button *ngIf="isCheckboxType()" (click)="checkCheckboxOptions()">
@@ -35,7 +50,7 @@
 			Falsche Antwort!
 		</h3>
 		<div class="mt-3">
-			Noch <strong>{{seconds}}</strong> Sekunden warten!
+			Noch <strong>{{seconds}}</strong> {{seconds === 1 ? 'Sekunde': 'Sekunden'}} warten!
 		</div>
 		<div class="mt-3" *ngIf="question.wrongAnswerHint">
 			{{question.wrongAnswerHint}}
