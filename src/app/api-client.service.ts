@@ -6,7 +6,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 })
 export class ApiClientService {
 
-    private static BASE_PATH = '';
+    private static BASE_PATH = 'https://vps31906144910.noezserver.de:3000';
 
     constructor(private httpClient: HttpClient) { }
 
