@@ -111,7 +111,7 @@ export class TestQuiz {
             question.options.push(qa3);
             const qa4 = new AnswerOption();
             qa4.text = 'Weiß/Gelb';
-            question.options.push(qa4)
+            question.options.push(qa4);
             quiz.questions.push(question);
         }
 
@@ -134,12 +134,12 @@ export class TestQuiz {
             qa4.text = 'Kutte selbst';
             qa4.correct = true;
             question.options.push(qa4);
-            quiz.questions.push(question)
+            quiz.questions.push(question);
         }
         {
             const question = new Question();
             question.title = 'Wo besorgt sich Arnold seine Inneneinrichtung?';
-            question.type = QuestionType.RADIO
+            question.type = QuestionType.RADIO;
             question.options = [];
             const qa1 = new AnswerOption();
             qa1.text = 'Im Ikea';
