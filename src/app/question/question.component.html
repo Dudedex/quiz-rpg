@@ -1,56 +1,55 @@
 <div class="question-container" *ngIf="question">
-  <h5><span [innerHtml]="question.title"></span></h5>
+	<h5><span [innerHtml]="question.title"></span></h5>
 	<img
-		 class="text-center mb-2"
-		 *ngIf="question.searchedImage && question.searchedImage.imageData"
-		 [src]="question.searchedImage.imageData"
-		 [width]="question.searchedImage.width"
-		 [alt]="'searched picture'">
+			class="text-center mb-2"
+			*ngIf="question.searchedImage && question.searchedImage.imageData"
+			[src]="question.searchedImage.imageData"
+			[alt]="'searched picture'">
 	<ng-container *ngIf="isImageSearch()">
 		<div *ngFor="let area of question.imageSearch.areaData">
 			- {{area.description}} {{area.checked ? '(gefunden)': ''}}
 		</div>
 	</ng-container>
-  <ng-container *ngIf="showRightAnswersHint">
-    <ngb-alert [type]="'success'" [dismissible]="false">
-      {{question.rigthAnswerHint}}
-    </ngb-alert>
-  </ng-container>
-    <div class="content" *ngFor="let option of question.options; index as i">
-        <ng-container *ngIf="isCheckboxType()">
-            <label for="question_{{i}}">
-                <input type="checkbox" id="question_{{i}}" [(ngModel)]="option.checked">
-                {{option.text}}
-            </label>
-        </ng-container>
-        <ng-container *ngIf="isRadioType()">
-          <button class="btn btn-info w-100 mt-2" (click)="checkRadioOption(option)">
-              {{option.text}}
-          </button>
-        </ng-container>
-    </div>
+	<div class="content" *ngFor="let option of question.options; index as i">
+		<ng-container *ngIf="isCheckboxType()">
+			<label class="btn btn-info w-100 text-left" for="question_{{i}}">
+				<input type="checkbox" id="question_{{i}}" [(ngModel)]="option.checked">
+				{{option.text}}
+			</label>
+		</ng-container>
+		<ng-container *ngIf="isRadioType()">
+			<button class="btn btn-info w-100 mt-2" (click)="checkRadioOption(option)">
+				{{option.text}}
+			</button>
+		</ng-container>
+	</div>
 	<ng-container *ngIf="isImageSearch()">
 		<div clas="responsive">
 			<img
-					#image
-					[width]="question.imageSearch.width"
-					[height]="question.imageSearch.height"
-					[src]="question.imageSearch.imageData"
-					[alt]="'picture'"
-					usemap="#areaMap"
-					(click)="coords($event)">
+                #image
+				[width]="IMAGE_CONTAINER_MAX_WIDTH"
+				[src]="question.imageSearch.imageData"
+				[alt]="'picture'"
+				usemap="#areaMap">
 		</div>
 
 		<map id="map_id" name="areaMap">
 			<ng-container *ngFor="let area of question.imageSearch.areaData; let i = index">
-				<area id="area_{{area.description}}" [alt]="'area_' + i" [shape]="area.shape" [coords]="getCordsForArea(area)" (click)="areaClicked(area, $event)" href="#">
+				<area [alt]="'area_' + i"
+					  [shape]="area.shape"
+					  [coords]="getCordsForArea(area)"
+					  (click)="areaClicked(area)" href="#">
 			</ng-container>
 		</map>
-    <button (click)="questionAnsweredCorrectly()">Frage überspringen</button>
+		<button class="btn btn-secondary mt-2 w-100"
+				[disabled]="!skippingImageSearchPossible"
+				(click)="skipImageSerch()">
+			Frage überspringen {{timeRemainingForSkip > 0 ? '(' + timeRemainingForSkip + ')': ''}}
+		</button>
 	</ng-container>
-    <button *ngIf="isCheckboxType()" (click)="checkCheckboxOptions()">
-        Antwort abgeben
-    </button>
+	<button class="btn btn-primary w-100" [disabled]="errorPenalty" *ngIf="isCheckboxType()" (click)="checkCheckboxOptions()">
+		Antwort abgeben
+	</button>
 	<ngb-alert class="mt-2" [type]="'danger'" *ngIf="errorPenalty" [dismissible]="false">
 		<h3>
 			Falsche Antwort!
@@ -61,5 +60,8 @@
 		<div class="mt-3" *ngIf="question.wrongAnswerHint">
 			{{question.wrongAnswerHint}}
 		</div>
+	</ngb-alert>
+	<ngb-alert class="mt-2" *ngIf="showRightAnswersHint" [type]="'success'" [dismissible]="false">
+		{{question.rigthAnswerHint}}
 	</ngb-alert>
 </div>

@@ -4,7 +4,6 @@ import {AnswerOption} from '../models/answer-option';
 import {QuestionType} from '../models/question-type';
 import {AreaData} from '../models/area-data';
 
-
 @Component({
     selector: 'app-question',
     templateUrl: './question.component.html'
@@ -19,8 +18,12 @@ export class QuestionComponent implements OnInit, OnChanges {
     @Output()
     public questionCorrect = new EventEmitter<void>();
 
+    public IMAGE_CONTAINER_MAX_WIDTH = 420;
     public errorPenalty: boolean;
     public seconds: number;
+    public questionedOpened: number;
+    public skippingImageSearchPossible: boolean;
+    public timeRemainingForSkip: number;
     private submitted: boolean;
     public showRightAnswersHint: boolean;
 
@@ -35,6 +38,14 @@ export class QuestionComponent implements OnInit, OnChanges {
         this.errorPenalty = false;
         this.seconds = undefined;
         this.submitted = false;
+        this.questionedOpened = Date.now();
+        if (this.question.type === QuestionType.IMAGE_SEARCH) {
+            this.skippingImageSearchPossible = false;
+            this.calcTimeRemainingForSkip(30);
+            setTimeout(() => {
+                this.skippingImageSearchPossible = true;
+            }, 30000);
+        }
     }
 
     public checkRadioOption(option: AnswerOption) {
@@ -52,6 +63,7 @@ export class QuestionComponent implements OnInit, OnChanges {
         for (const answer of this.question.options) {
             if ((answer.correct && !answer.checked) || (!answer.correct && answer.checked)) {
                 this.startErrorTimer();
+                return;
             }
         }
 
@@ -70,30 +82,41 @@ export class QuestionComponent implements OnInit, OnChanges {
         return this.question.type === QuestionType.IMAGE_SEARCH;
     }
 
-    public areaClicked(area: AreaData, event: any) {
-        console.log(event);
-        console.log('Area clicked ' + area.description)
+    public areaClicked(area: AreaData) {
         area.checked = true;
         if (this.question.imageSearch.areaData.findIndex(ad => !ad.checked) === -1) {
             this.questionAnsweredCorrectly();
         }
     }
 
-    public coords(event) {
-        console.log(event);
-        console.log('x:' + (event.offsetX / this.image.nativeElement.width));
-        console.log('y:' + (event.offsetY / this.image.nativeElement.height));
-    }
-
     public getCordsForArea(area: AreaData) {
+        // 420 container max-width
+        let ratio = 1;
+        if (this.image && this.image.nativeElement && this.image.nativeElement.width !== 0) {
+            ratio = this.image.nativeElement.width / 420;
+        }
         switch (area.shape) {
             case 'circle':
-                return area.x1 + ',' + area.y1 + ',' + area.radius;
+                return area.x1 * ratio + ',' + area.y1 * ratio + ',' + area.radius * ratio;
             case 'rect':
-                return area.x1 + ',' + area.y1 + ',' + area.x2 + ',' + area.y2;
+                return area.x1 * ratio + ',' + area.y1 * ratio + ',' + area.x2 * ratio + ',' + area.y2 * ratio;
         }
         console.error('Shape ' +  area.shape + ' has no handler yet');
         return '';
+    }
+
+    public skipImageSerch() {
+        if (!this.skippingImageSearchPossible) {
+            return;
+        }
+        this.questionAnsweredCorrectly();
+    }
+
+    private calcTimeRemainingForSkip(time: number) {
+        this.timeRemainingForSkip = time;
+        setTimeout(() => {
+            this.calcTimeRemainingForSkip(time - 1);
+        }, 1000);
     }
 
     private startErrorTimer() {
@@ -117,7 +140,7 @@ export class QuestionComponent implements OnInit, OnChanges {
         }, 1000);
     }
 
-    public questionAnsweredCorrectly() {
+    private questionAnsweredCorrectly() {
         if (!this.submitted) {
             this.submitted = true;
             if (this.question.rigthAnswerHint){
@@ -125,7 +148,7 @@ export class QuestionComponent implements OnInit, OnChanges {
               setTimeout(() => {
                 this.showRightAnswersHint = false;
                 this.questionCorrect.emit();
-              }, 5000);
+              }, 2000);
             } else {
               this.questionCorrect.emit();
             }

@@ -50,9 +50,9 @@ app.post('/:gameId/registerPlayer', function (req, res) {
 app.post('/:gameId/finished', function (req, res) {
     const gameId = req.params.gameId;
     const username = req.body.username;
-    var penaltyTimes = req.body.penaltyTimes;
-    if (!penaltyTimes) {
-        penaltyTimes = 0;
+    var penaltyTime = req.body.penaltyTimes;
+    if (!penaltyTime) {
+        penaltyTime = 0;
     }
     if (gameId === undefined
         || games[gameId] === undefined
@@ -65,9 +65,19 @@ app.post('/:gameId/finished', function (req, res) {
     games[gameId].gameStats.push({
         username,
         finishedTime: Date.now(),
-        penaltyTimes
+        penaltyTime: penaltyTime
     });
     res.send();
+});
+
+app.post('/:gameId/stats', function (req, res) {
+    const gameId = req.params.gameId;
+    if (gameId === undefined
+        || games[gameId] === undefined) {
+        res.status(400).send();
+        return;
+    }
+    res.send(games[gameId].gameStats);
 });
 
 app.post('/:gameId/admin/startGame', function (req, res) {

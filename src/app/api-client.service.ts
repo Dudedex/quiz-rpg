@@ -27,4 +27,8 @@ export class ApiClientService {
     public clearGame(lobby: string) {
         return this.httpClient.post(lobby + 'admin/clearGame', {});
     }
+
+    public loadStats(lobby: string) {
+        return this.httpClient.post(lobby + 'stats', {});
+    }
 }
