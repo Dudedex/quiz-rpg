@@ -129,14 +129,25 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
     res.send();
 });
 
-app.listen(port, function () {
-    console.log('Dummy quiz-server listening on port ' +  port +'!');
-    requiredToken = fs.readFileSync(filePath, {encoding:'utf8'});
-    if (requiredToken) {
-        requiredToken = requiredToken.trim();
-    }
-    addOrClearGame('show', false);
-});
+var https = require('https');
+var http = require('http');
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+};
+
+
+// Create an HTTP service.
+http.createServer(app).listen(port -10);
+// Create an HTTPS service identical to the HTTP service.
+https.createServer(options, app).listen(port);
+
+console.log('Dummy quiz-server listening on port ' +  port +'!');
+requiredToken = fs.readFileSync(filePath, {encoding:'utf8'});
+if (requiredToken) {
+    requiredToken = requiredToken.trim();
+}
+addOrClearGame('show', false);
 
 function validateAdmin(req, res) {
     const providedToken = req.headers ? req.headers['authorization']: '';
