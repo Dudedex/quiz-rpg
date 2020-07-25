@@ -28,7 +28,7 @@ http.createServer(app).listen(port -10);
 // Create an HTTPS service identical to the HTTP service.
 https.createServer(options, app).listen(port);
 
-app.get(options, '/:gameId', function (req, res) {
+app.get('/:gameId', function (req, res) {
     const gameId = req.params.gameId;
     if (games[gameId] === undefined) {
         res.status(400).send();
@@ -44,7 +44,7 @@ app.get(options, '/:gameId', function (req, res) {
     });
 });
 
-app.post(options, '/:gameId/registerPlayer', function (req, res) {
+app.post('/:gameId/registerPlayer', function (req, res) {
     const gameId = req.params.gameId;
     const username = req.body.username;
     if (gameId === undefined
@@ -64,7 +64,7 @@ app.post(options, '/:gameId/registerPlayer', function (req, res) {
     res.send();
 });
 
-app.post(options, '/:gameId/finished', function (req, res) {
+app.post('/:gameId/finished', function (req, res) {
     const gameId = req.params.gameId;
     const username = req.body.username;
     var penaltyTime = req.body.penaltyTimes;
@@ -87,7 +87,7 @@ app.post(options, '/:gameId/finished', function (req, res) {
     res.send();
 });
 
-app.post(options, '/:gameId/stats', function (req, res) {
+app.post('/:gameId/stats', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined) {
@@ -97,7 +97,7 @@ app.post(options, '/:gameId/stats', function (req, res) {
     res.send(games[gameId].gameStats);
 });
 
-app.post(options, '/:gameId/admin/startGame', function (req, res) {
+app.post('/:gameId/admin/startGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined
@@ -113,7 +113,7 @@ app.post(options, '/:gameId/admin/startGame', function (req, res) {
     res.send();
 });
 
-app.post(options, '/:gameId/admin/registerGame', function (req, res) {
+app.post('/:gameId/admin/registerGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] !== undefined){
@@ -128,7 +128,7 @@ app.post(options, '/:gameId/admin/registerGame', function (req, res) {
     res.send();
 });
 
-app.post(options, '/:gameId/admin/clearGame', function (req, res) {
+app.post('/:gameId/admin/clearGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined) {
