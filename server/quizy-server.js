@@ -15,7 +15,20 @@ var fs = require('fs');
 var path = require('path');
 var filePath = path.join(__dirname, '.token');
 
-app.get('/:gameId', function (req, res) {
+var https = require('https');
+var http = require('http');
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+};
+
+
+// Create an HTTP service.
+http.createServer(app).listen(port -10);
+// Create an HTTPS service identical to the HTTP service.
+https.createServer(options, app).listen(port);
+
+app.get(options, '/:gameId', function (req, res) {
     const gameId = req.params.gameId;
     if (games[gameId] === undefined) {
         res.status(400).send();
@@ -31,7 +44,7 @@ app.get('/:gameId', function (req, res) {
     });
 });
 
-app.post('/:gameId/registerPlayer', function (req, res) {
+app.post(options, '/:gameId/registerPlayer', function (req, res) {
     const gameId = req.params.gameId;
     const username = req.body.username;
     if (gameId === undefined
@@ -51,7 +64,7 @@ app.post('/:gameId/registerPlayer', function (req, res) {
     res.send();
 });
 
-app.post('/:gameId/finished', function (req, res) {
+app.post(options, '/:gameId/finished', function (req, res) {
     const gameId = req.params.gameId;
     const username = req.body.username;
     var penaltyTime = req.body.penaltyTimes;
@@ -74,7 +87,7 @@ app.post('/:gameId/finished', function (req, res) {
     res.send();
 });
 
-app.post('/:gameId/stats', function (req, res) {
+app.post(options, '/:gameId/stats', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined) {
@@ -84,7 +97,7 @@ app.post('/:gameId/stats', function (req, res) {
     res.send(games[gameId].gameStats);
 });
 
-app.post('/:gameId/admin/startGame', function (req, res) {
+app.post(options, '/:gameId/admin/startGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined
@@ -100,7 +113,7 @@ app.post('/:gameId/admin/startGame', function (req, res) {
     res.send();
 });
 
-app.post('/:gameId/admin/registerGame', function (req, res) {
+app.post(options, '/:gameId/admin/registerGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] !== undefined){
@@ -115,7 +128,7 @@ app.post('/:gameId/admin/registerGame', function (req, res) {
     res.send();
 });
 
-app.post('/:gameId/admin/clearGame', function (req, res) {
+app.post(options, '/:gameId/admin/clearGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined) {
@@ -128,19 +141,6 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
     addOrClearGame(gameId, true);
     res.send();
 });
-
-var https = require('https');
-var http = require('http');
-const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-};
-
-
-// Create an HTTP service.
-http.createServer(app).listen(port -10);
-// Create an HTTPS service identical to the HTTP service.
-https.createServer(options, app).listen(port);
 
 console.log('Dummy quiz-server listening on port ' +  port +'!');
 requiredToken = fs.readFileSync(filePath, {encoding:'utf8'});
