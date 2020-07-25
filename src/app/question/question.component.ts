@@ -22,6 +22,7 @@ export class QuestionComponent implements OnInit, OnChanges {
     public errorPenalty: boolean;
     public seconds: number;
     private submitted: boolean;
+    public showRightAnswersHint: boolean;
 
     constructor() {
     }
@@ -119,7 +120,15 @@ export class QuestionComponent implements OnInit, OnChanges {
     public questionAnsweredCorrectly() {
         if (!this.submitted) {
             this.submitted = true;
-            this.questionCorrect.emit();
+            if (this.question.rigthAnswerHint){
+              this.showRightAnswersHint = true;
+              setTimeout(() => {
+                this.showRightAnswersHint = false;
+                this.questionCorrect.emit();
+              }, 5000);
+            } else {
+              this.questionCorrect.emit();
+            }
         }
     }
 

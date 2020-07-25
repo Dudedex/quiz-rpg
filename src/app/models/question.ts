@@ -9,4 +9,5 @@ export class Question {
     public options: AnswerOption[] = [];
     public imageSearch: ImageSearch;
     public wrongAnswerHint: string;
+    public rigthAnswerHint: string;
 }

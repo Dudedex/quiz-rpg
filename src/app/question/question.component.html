@@ -1,5 +1,5 @@
 <div class="question-container" *ngIf="question">
-    <h5>{{question.title}}</h5>
+  <h5><span [innerHtml]="question.title"></span></h5>
 	<img
 		 class="text-center mb-2"
 		 *ngIf="question.searchedImage && question.searchedImage.imageData"
@@ -11,6 +11,11 @@
 			- {{area.description}} {{area.checked ? '(gefunden)': ''}}
 		</div>
 	</ng-container>
+  <ng-container *ngIf="showRightAnswersHint">
+    <ngb-alert [type]="'success'" [dismissible]="false">
+      {{question.rigthAnswerHint}}
+    </ngb-alert>
+  </ng-container>
     <div class="content" *ngFor="let option of question.options; index as i">
         <ng-container *ngIf="isCheckboxType()">
             <label for="question_{{i}}">
