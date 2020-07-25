@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root'
@@ -20,12 +20,18 @@ export class ApiClientService {
         return this.httpClient.post(lobby + 'registerPlayer', {username});
     }
 
-    public startGame(lobby: string) {
-        return this.httpClient.post(lobby + 'admin/startGame', {});
+    public startGame(lobby: string, token: string) {
+        const headers = new HttpHeaders().set('Authorization', token).set('Content-Type', 'application/json').set('Accept', 'application/json');
+        return this.httpClient.post(lobby + 'admin/startGame', {}, {
+            headers
+        });
     }
 
-    public clearGame(lobby: string) {
-        return this.httpClient.post(lobby + 'admin/clearGame', {});
+    public clearGame(lobby: string, token: string) {
+        const headers = new HttpHeaders().set('Authorization', token);
+        return this.httpClient.post(lobby + 'admin/clearGame', {}, {
+            headers
+        });
     }
 
     public loadStats(lobby: string) {

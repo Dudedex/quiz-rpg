@@ -8,6 +8,7 @@
 		<ngb-alert [type]="'danger'" *ngIf="showUsernameError" (close)="showUsernameError = false">
 			Der angegebene Benutzername ist nicht mehr verfügbar
 		</ngb-alert>
+		<h3>Benutzername angeben</h3>
 		<input class="w-100" type="text" [(ngModel)]="username" [placeholder]="'Benutzername...'">
 		<div class="mt-2">
 			<button class="btn btn-primary w-100" (click)="progressQuiz()">Anmelden</button>
@@ -20,6 +21,7 @@
 		<ngb-alert [type]="'danger'" *ngIf="showLobbyError" (close)="showUsernameError = showLobbyError">
 			Die Lobby ist nicht mehr verfügbar oder befindet sich noch im Spiel
 		</ngb-alert>
+		<h3>Lobby auswählen</h3>
 		<input class="w-100" type="text" [(ngModel)]="lobby" [placeholder]="'https://...'">
 		<div class="mt-2">
 			<button class="btn btn-primary w-100" (click)="progressQuiz()">Lobby beitreten</button>
@@ -57,7 +59,6 @@
 	</div>
 </div>
 
-<button (click)="startGame()">Start game</button>
-<button (click)="clearGame()">Clear game</button>
+
 
 

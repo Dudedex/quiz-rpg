@@ -8,18 +8,22 @@ import {FormsModule} from '@angular/forms';
 import {ApiClientService} from './api-client.service';
 import {HttpClientModule} from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {AppRoutingModule} from './app-routing/app-routing.module';
+import { AdminConsoleComponent } from './admin-console/admin-console.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         QuestionComponent,
-        QuizComponent
+        QuizComponent,
+        AdminConsoleComponent
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HttpClientModule,
-        NgbModule
+        NgbModule,
+        AppRoutingModule
     ],
     providers: [ApiClientService],
     bootstrap: [AppComponent]

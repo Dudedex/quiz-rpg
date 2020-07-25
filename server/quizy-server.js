@@ -89,10 +89,11 @@ app.post('/:gameId/admin/startGame', function (req, res) {
     if (gameId === undefined
         || games[gameId] === undefined
         || games[gameId].startTime !== 0) {
+        console.log('invalid game');
         res.status(400).send();
         return;
     }
-    if(!validateAdmin(res)) {
+    if(!validateAdmin(req, res)) {
         return;
     }
     games[gameId].startTime = Date.now() + 5000;
@@ -103,10 +104,11 @@ app.post('/:gameId/admin/registerGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] !== undefined){
+        console.log('invalid game');
         res.status(400).send();
         return;
     }
-    if(!validateAdmin(res)) {
+    if(!validateAdmin(req, res)) {
         return;
     }
     addOrClearGame(gameId, false);
@@ -120,7 +122,7 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
         res.status(404).send();
         return;
     }
-    if(!validateAdmin(res)) {
+    if(!validateAdmin(req, res)) {
         return;
     }
     addOrClearGame(gameId, true);
@@ -130,13 +132,17 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
 app.listen(port, function () {
     console.log('Dummy quiz-server listening on port ' +  port +'!');
     requiredToken = fs.readFileSync(filePath, {encoding:'utf8'});
+    if (requiredToken) {
+        requiredToken = requiredToken.trim();
+    }
     addOrClearGame('show', false);
 });
 
-function validateAdmin(res) {
-    const providedToken = res.headers ? res.headers.accessToken: '';
+function validateAdmin(req, res) {
+    const providedToken = req.headers ? req.headers['authorization']: '';
     if (requiredToken !== providedToken) {
         console.log('Invalid token skip throw 401');
+        console.log('Provided Token was: ' + providedToken);
         res.status(401).send();
         return false;
     }

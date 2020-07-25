@@ -13,7 +13,7 @@ import {GameStats} from '../models/game-stats';
 export class QuizComponent implements OnInit {
 
     public username: string;
-    public lobby: string = 'http://localhost:3000/test/';
+    public lobby: string = 'http://localhost:3000/show/';
     public showLobbyError: boolean;
     public showUsernameError: boolean;
     public showWarning: boolean;
@@ -150,14 +150,6 @@ export class QuizComponent implements OnInit {
                 this.stats = res;
             });
         });
-    }
-
-    public startGame() {
-        this.apiClient.startGame(this.lobby).subscribe();
-    }
-
-    public clearGame() {
-        this.apiClient.clearGame(this.lobby).subscribe();
     }
 
     private validateStep() {
