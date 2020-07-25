@@ -6,11 +6,15 @@ var port = 3000;
 if (process.argv.length > 2) {
     port = parseInt(process.argv[2]);
 }
-
 var games = {};
-
+var requiredToken = '';
 app.use(bodyParser.json());
 app.use(cors());
+
+var fs = require('fs');
+var path = require('path');
+var filePath = path.join(__dirname, '.token');
+
 app.get('/:gameId', function (req, res) {
     const gameId = req.params.gameId;
     if (games[gameId] === undefined) {
@@ -88,6 +92,9 @@ app.post('/:gameId/admin/startGame', function (req, res) {
         res.status(400).send();
         return;
     }
+    if(!validateAdmin(res)) {
+        return;
+    }
     games[gameId].startTime = Date.now() + 5000;
     res.send();
 });
@@ -97,6 +104,9 @@ app.post('/:gameId/admin/registerGame', function (req, res) {
     if (gameId === undefined
         || games[gameId] !== undefined){
         res.status(400).send();
+        return;
+    }
+    if(!validateAdmin(res)) {
         return;
     }
     addOrClearGame(gameId, false);
@@ -110,14 +120,28 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
         res.status(404).send();
         return;
     }
+    if(!validateAdmin(res)) {
+        return;
+    }
     addOrClearGame(gameId, true);
     res.send();
 });
 
 app.listen(port, function () {
     console.log('Dummy quiz-server listening on port ' +  port +'!');
-    addOrClearGame('test', false);
+    requiredToken = fs.readFileSync(filePath, {encoding:'utf8'});
+    addOrClearGame('show', false);
 });
+
+function validateAdmin(res) {
+    const providedToken = res.headers ? res.headers.accessToken: '';
+    if (requiredToken !== providedToken) {
+        console.log('Invalid token skip throw 401');
+        res.status(401).send();
+        return false;
+    }
+    return true;
+}
 
 function addOrClearGame(gameId, isClear) {
     if (games[gameId] !== undefined && !isClear) {
