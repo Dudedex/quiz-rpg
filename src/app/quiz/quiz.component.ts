@@ -13,7 +13,7 @@ import {GameStats} from '../models/game-stats';
 export class QuizComponent implements OnInit {
 
     public username: string;
-    public lobby: string = 'http://localhost:3000/show/';
+    public lobby: string = 'show';
     public showLobbyError: boolean;
     public showUsernameError: boolean;
     public showWarning: boolean;
@@ -74,9 +74,6 @@ export class QuizComponent implements OnInit {
 
         switch (this.quizSteps[this.currentStep]) {
             case QuizStep.LOBBY_SELECTION:
-                if (!this.lobby.endsWith('/')) {
-                    this.lobby = this.lobby + '/';
-                }
                 this.apiClient.registerPlayer(this.lobby, this.username).subscribe(
                         () => {
                             this.showLobbyError = false;

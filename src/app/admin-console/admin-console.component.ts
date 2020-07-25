@@ -9,7 +9,7 @@ import {ApiClientService} from '../api-client.service';
 export class AdminConsoleComponent implements OnInit {
 
     public token: string;
-    public lobby: string = 'http://localhost:3000/show/';
+    public lobby: string = 'show';
 
     constructor(private apiClient: ApiClientService) { }
 
