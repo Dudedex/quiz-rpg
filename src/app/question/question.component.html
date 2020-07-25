@@ -41,6 +41,7 @@
 				<area id="area_{{area.description}}" [alt]="'area_' + i" [shape]="area.shape" [coords]="getCordsForArea(area)" (click)="areaClicked(area, $event)" href="#">
 			</ng-container>
 		</map>
+    <button (click)="questionAnsweredCorrectly()">Frage überspringen</button>
 	</ng-container>
     <button *ngIf="isCheckboxType()" (click)="checkCheckboxOptions()">
         Antwort abgeben

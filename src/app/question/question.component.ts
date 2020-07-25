@@ -116,7 +116,7 @@ export class QuestionComponent implements OnInit, OnChanges {
         }, 1000);
     }
 
-    private questionAnsweredCorrectly() {
+    public questionAnsweredCorrectly() {
         if (!this.submitted) {
             this.submitted = true;
             this.questionCorrect.emit();
