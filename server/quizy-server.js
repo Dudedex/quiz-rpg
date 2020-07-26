@@ -13,18 +13,19 @@ app.use(cors());
 
 var fs = require('fs');
 var path = require('path');
-var filePath = path.join(__dirname, '.token');
+var tokenFilePath = path.join(__dirname, '.token');
 
 var https = require('https');
-var http = require('http');
 var options = undefined;
-if (fs.existsSync("key.pem") && fs.existsSync("cert.pem")) {
+if (fs.existsSync(".cert-paths.txt")) {
+    const certificateFilePath = JSON.parse(fs.readFileSync('.cert-paths.txt'));
     options = {
-        key: fs.readFileSync('key.pem'),
-        cert: fs.readFileSync('cert.pem')
+        key: fs.readFileSync(certificateFilePath.key, 'utf8'),
+        cert: fs.readFileSync(certificateFilePath.cert, 'utf8'),
+        ca: fs.readFileSync(certificateFilePath.ca, 'utf8'),
     };
 }
-
+console.log(options);
 
 // Create an HTTP service.
 if (!options) {
@@ -180,7 +181,7 @@ app.get('/admin/games', function (req, res) {
 });
 
 console.log('Dummy quiz-server listening on port ' +  port +'!');
-requiredToken = fs.readFileSync(filePath, {encoding:'utf8'});
+requiredToken = fs.readFileSync(tokenFilePath, {encoding:'utf8'});
 if (requiredToken) {
     requiredToken = requiredToken.trim();
 }
