@@ -22,15 +22,15 @@ export class TestQuiz {
       question.options.push(q1a1);
       const q1a2 = new AnswerOption();
       q1a2.text = 'Spieleabend - die Show';
-      question.wrongAnswerHint = 'Ich hoffe wir kommen heute ohne Technische Störungen durch';
+      q1a2.wrongAnswerHint = 'Ich hoffe wir kommen heute ohne Technische Störungen durch';
       question.options.push(q1a2);
       const q1a3 = new AnswerOption();
       q1a3.text = 'Wer wird Millionär';
-      question.wrongAnswerHint = 'Sind Sie sich ganz sicher?';
+      q1a3.wrongAnswerHint = 'Sind Sie sich ganz sicher?';
       question.options.push(q1a3);
       const q1a4 = new AnswerOption();
       q1a4.text = 'Das Familienduell';
-      question.wrongAnswerHint = 'Wir haben 100 Leute gefragt. Nennen Sie...';
+      q1a4.wrongAnswerHint = 'Wir haben 100 Leute gefragt. Nennen Sie...';
       question.options.push(q1a4);
       quiz.questions.push(question);
     }
