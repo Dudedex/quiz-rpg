@@ -172,14 +172,14 @@ export class QuizComponent implements OnInit {
                     this.apiClient.checkStartTime(this.lobby).subscribe((res: any) => {
                         this.startTime = res.startTime as number;
                         this.players = res.players;
-                        const now = new Date().getTime();
+                        const now = Date.now();
                         if (this.startTime > now) {
                             this.startSubscription.unsubscribe();
                             this.blockCall = true;
-                            this.startWaitTimer(Math.ceil((this.startTime - now) / 1000));
+                            this.startWaitTimer(Math.round((this.startTime - now) / 1000));
                             setTimeout(() => {
                                 this.progressQuiz();
-                            }, this.startTime - new Date().getTime());
+                            }, this.startTime - now);
                         }
                     });
                 }

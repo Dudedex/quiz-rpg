@@ -194,7 +194,7 @@ export class TestQuiz {
             const question = new Question();
             question.title = 'Welches Verkehrsmittel fährt Sarah bis zum Kotzen?';
             question.rigthAnswerSequel = '♫♫♫ <br>Eine Seefahrt die ist lustig, <br>eine Seefahrt die ist schön <br>♫♫♫' ;
-            question.wrongAnswerHint = 'Mir ist immer noch schwindelig. Michi, ist das normal?';
+            question.wrongAnswerHint = 'Mir ist immer noch schwindelig.<br>Michi, ist das normal?';
             question.rightAnswerScreenTime = 4;
             question.type = QuestionType.RADIO;
             question.options = [];
