@@ -42,7 +42,7 @@ app.get('/:gameId', function (req, res) {
         return;
     }
     var time = games[gameId].startTime;
-    if (time < Date.now()) {
+    if (time < Date.now() + 50000) {
         time = 0;
     }
     res.send({
