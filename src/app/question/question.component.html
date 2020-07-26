@@ -50,18 +50,21 @@
 	<button class="btn btn-primary w-100" [disabled]="errorPenalty" *ngIf="isCheckboxType()" (click)="checkCheckboxOptions()">
 		Antwort abgeben
 	</button>
-	<ngb-alert class="mt-2" [type]="'danger'" *ngIf="errorPenalty" [dismissible]="false">
+	<ngb-alert class="overlay-hint" [type]="'danger'" *ngIf="errorPenalty" [dismissible]="false">
 		<h3>
 			Falsche Antwort!
 		</h3>
 		<div class="mt-3">
 			Noch <strong>{{seconds}}</strong> {{seconds === 1 ? 'Sekunde': 'Sekunden'}} warten!
 		</div>
-		<div class="mt-3" *ngIf="question.wrongAnswerHint">
-			{{question.wrongAnswerHint}}
+		<div class="mt-3" *ngIf="question.wrongAnswerHint && !wrongAnswerSpecial">
+			<span [innerHTML]="question.wrongAnswerHint"></span>
+		</div>
+		<div class="mt-3" *ngIf="wrongAnswerSpecial">
+			<span [innerHTML]="wrongAnswerSpecial"></span>
 		</div>
 	</ngb-alert>
-	<ngb-alert class="mt-2" *ngIf="showRightAnswersHint" [type]="'success'" [dismissible]="false">
-		{{question.rigthAnswerHint}}
+	<ngb-alert class="overlay-hint" *ngIf="showRightAnswersHint" [type]="'success'" [dismissible]="false">
+		<span [innerHTML]="question.rigthAnswerSequel"></span>
 	</ngb-alert>
 </div>

@@ -10,6 +10,9 @@ import {AreaData} from '../models/area-data';
 })
 export class QuestionComponent implements OnInit, OnChanges {
 
+    static IMAGE_SEARCH_SKIP_TIME = 30;
+    static QUESTION_ERROR_PENALTY = 8;
+
     @ViewChild('image') public image: ElementRef;
 
     @Input()
@@ -26,6 +29,7 @@ export class QuestionComponent implements OnInit, OnChanges {
     public timeRemainingForSkip: number;
     private submitted: boolean;
     public showRightAnswersHint: boolean;
+    public wrongAnswerSpecial: string;
 
     constructor() {
     }
@@ -38,13 +42,15 @@ export class QuestionComponent implements OnInit, OnChanges {
         this.errorPenalty = false;
         this.seconds = undefined;
         this.submitted = false;
+        this.wrongAnswerSpecial = undefined;
+        this.timeRemainingForSkip = undefined;
         this.questionedOpened = Date.now();
         if (this.question.type === QuestionType.IMAGE_SEARCH) {
             this.skippingImageSearchPossible = false;
-            this.calcTimeRemainingForSkip(30);
+            this.calcTimeRemainingForSkip(QuestionComponent.IMAGE_SEARCH_SKIP_TIME);
             setTimeout(() => {
                 this.skippingImageSearchPossible = true;
-            }, 30000);
+            }, QuestionComponent.IMAGE_SEARCH_SKIP_TIME * 1000);
         }
     }
 
@@ -55,6 +61,7 @@ export class QuestionComponent implements OnInit, OnChanges {
         if (option.correct) {
             this.questionAnsweredCorrectly();
         } else {
+            this.wrongAnswerSpecial = option.wrongAnswerHint;
             this.startErrorTimer();
         }
     }
@@ -93,7 +100,7 @@ export class QuestionComponent implements OnInit, OnChanges {
         // 420 container max-width
         let ratio = 1;
         if (this.image && this.image.nativeElement && this.image.nativeElement.width !== 0) {
-            ratio = this.image.nativeElement.width / 420;
+            ratio = this.image.nativeElement.width / this.IMAGE_CONTAINER_MAX_WIDTH;
         }
         switch (area.shape) {
             case 'circle':
@@ -114,9 +121,11 @@ export class QuestionComponent implements OnInit, OnChanges {
 
     private calcTimeRemainingForSkip(time: number) {
         this.timeRemainingForSkip = time;
-        setTimeout(() => {
-            this.calcTimeRemainingForSkip(time - 1);
-        }, 1000);
+        if (this.timeRemainingForSkip > 0) {
+            setTimeout(() => {
+                this.calcTimeRemainingForSkip(time - 1);
+            }, 1000);
+        }
     }
 
     private startErrorTimer() {
@@ -124,10 +133,10 @@ export class QuestionComponent implements OnInit, OnChanges {
             return;
         }
         this.errorPenalty = true;
-        this.countErrorTime(5);
+        this.countErrorTime(QuestionComponent.QUESTION_ERROR_PENALTY);
         setTimeout(() => {
             this.errorPenalty = false;
-        }, 5000);
+        }, QuestionComponent.QUESTION_ERROR_PENALTY * 1000);
     }
 
     private countErrorTime(timeInSeconds: number) {
@@ -143,12 +152,12 @@ export class QuestionComponent implements OnInit, OnChanges {
     private questionAnsweredCorrectly() {
         if (!this.submitted) {
             this.submitted = true;
-            if (this.question.rigthAnswerHint){
+            if (this.question.rigthAnswerSequel) {
               this.showRightAnswersHint = true;
               setTimeout(() => {
                 this.showRightAnswersHint = false;
                 this.questionCorrect.emit();
-              }, 2000);
+              }, this.question.rightAnswerScreenTime * 1000);
             } else {
               this.questionCorrect.emit();
             }

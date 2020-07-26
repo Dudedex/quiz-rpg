@@ -25,7 +25,6 @@ if (fs.existsSync(".cert-paths.txt")) {
         ca: fs.readFileSync(certificateFilePath.ca, 'utf8'),
     };
 }
-console.log(options);
 
 // Create an HTTP service.
 if (!options) {
