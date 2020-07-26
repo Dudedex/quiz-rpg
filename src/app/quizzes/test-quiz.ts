@@ -22,7 +22,7 @@ export class TestQuiz {
       question.options.push(q1a1);
       const q1a2 = new AnswerOption();
       q1a2.text = 'Spieleabend - die Show';
-      question.wrongAnswerHint = 'Ich hoffe wir kommen heute ohne Technische Störungen rum';
+      question.wrongAnswerHint = 'Ich hoffe wir kommen heute ohne Technische Störungen durch';
       question.options.push(q1a2);
       const q1a3 = new AnswerOption();
       q1a3.text = 'Wer wird Millionär';
@@ -132,7 +132,7 @@ export class TestQuiz {
       const question = new Question();
       question.title = 'Wer hat Sarah die Krone von Kutte übergeben? (2 Antworten sind richtig)';
       question.rigthAnswerHint = 'Lang lebe die Queen';
-      question.wrongAnswerHint = 'Nants ingonyama bagithi baba<br>Sithi uhhmm ingonyama<br>';
+      question.wrongAnswerHint = 'Nants ingonyama bagithi baba';
       question.type = QuestionType.CHECKBOX;
       question.options = [];
       const qa1 = new AnswerOption();
@@ -202,7 +202,7 @@ export class TestQuiz {
     {
       const question = new Question();
       question.title = 'Bei welchen Quiz-Kategorien ist sich Richy so "sicher", dass er die Fragen nicht einmal liest?';
-      question.rigthAnswerHint = 'Wie kann es sein, dass ich nicht eine richtig errate!';
+      question.rigthAnswerHint = 'Wie kann es sein, dass ich nicht eine richtig geraten habe!';
       question.wrongAnswerHint = 'Ich hab doch gar nicht gemeckert!';
       question.type = QuestionType.CHECKBOX;
       question.options = [];
@@ -243,7 +243,6 @@ export class TestQuiz {
       qa4.text = 'Braun';
       question.options.push(qa4);
       quiz.questions.push(question);
-
 
     }
     return quiz;
