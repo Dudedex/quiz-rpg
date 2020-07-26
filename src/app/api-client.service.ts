@@ -6,7 +6,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 })
 export class ApiClientService {
 
-    private static BASE_PATH = 'https://vps31906144910.noezserver.de:3000/';
+    private static BASE_PATH = 'http://localhost:3000/';
 
     constructor(private httpClient: HttpClient) { }
 
@@ -22,6 +22,12 @@ export class ApiClientService {
         return this.httpClient.post(ApiClientService.BASE_PATH + ApiClientService.streamLineLobby(lobby) + 'registerPlayer', {username});
     }
 
+    public loadStats(lobby: string) {
+        return this.httpClient.post(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby) + 'stats', {});
+    }
+
+    //admin
+
     public startGame(lobby: string, token: string) {
         const headers = new HttpHeaders().set('Authorization', token).set('Content-Type', 'application/json').set('Accept', 'application/json');
         return this.httpClient.post(ApiClientService.BASE_PATH + ApiClientService.streamLineLobby(lobby) + 'admin/startGame', {}, {
@@ -36,8 +42,25 @@ export class ApiClientService {
         });
     }
 
-    public loadStats(lobby: string) {
-        return this.httpClient.post(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby) + 'stats', {});
+    public loadGames(token: string){
+        const headers = new HttpHeaders().set('Authorization', token);
+        return this.httpClient.get(ApiClientService.BASE_PATH  + 'admin/games', {
+            headers
+        });
+    }
+
+    public registerGame(token: string, gameName: string){
+        const headers = new HttpHeaders().set('Authorization', token);
+        return this.httpClient.post(ApiClientService.BASE_PATH  + gameName + '/admin/registerGame',{}, {
+            headers
+        });
+    }
+
+    public deleteGame(token: string, gameName: string){
+        const headers = new HttpHeaders().set('Authorization', token);
+        return this.httpClient.post(ApiClientService.BASE_PATH  + gameName + '/admin/deleteGame', {}, {
+            headers
+        });
     }
 
     private static streamLineLobby(lobby: string) {

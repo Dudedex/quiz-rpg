@@ -143,8 +143,10 @@ export class QuizComponent implements OnInit {
             username: this.username
         }).subscribe(() => {
             this.currentStep += 1;
-            this.statSubscription = this.apiClient.loadStats(this.lobby).subscribe((res: any) => {
-                this.stats = res;
+            this.statSubscription = interval(500).subscribe(() => {
+                this.apiClient.loadStats(this.lobby).subscribe((res: any) => {
+                    this.stats = res;
+                });
             });
         });
     }

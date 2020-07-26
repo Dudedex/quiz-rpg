@@ -17,16 +17,23 @@ var filePath = path.join(__dirname, '.token');
 
 var https = require('https');
 var http = require('http');
-const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-};
+var options = undefined;
+if (fs.existsSync("key.pem") && fs.existsSync("cert.pem")) {
+    options = {
+        key: fs.readFileSync('key.pem'),
+        cert: fs.readFileSync('cert.pem')
+    };
+}
 
 
 // Create an HTTP service.
-http.createServer(app).listen(port -10);
-// Create an HTTPS service identical to the HTTP service.
-https.createServer(options, app).listen(port);
+if (!options) {
+    console.log('Creating http server');
+    app.listen(port);
+} else {
+    console.log('Creating https server');
+    https.createServer(options, app).listen(port);
+}
 
 app.get('/:gameId', function (req, res) {
     const gameId = req.params.gameId;
@@ -116,6 +123,7 @@ app.post('/:gameId/admin/startGame', function (req, res) {
 app.post('/:gameId/admin/registerGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
+        || gameId.length < 3
         || games[gameId] !== undefined){
         console.log('invalid game');
         res.status(400).send();
@@ -127,6 +135,24 @@ app.post('/:gameId/admin/registerGame', function (req, res) {
     addOrClearGame(gameId, false);
     res.send();
 });
+
+app.post('/:gameId/admin/deleteGame', function (req, res) {
+    const gameId = req.params.gameId;
+    if (gameId === undefined
+        || gameId.length < 3
+        || games[gameId] === undefined){
+        console.log('invalid game');
+        res.status(400).send();
+        return;
+    }
+    if(!validateAdmin(req, res)) {
+        return;
+    }
+    delete games[gameId];
+    games = JSON.parse(JSON.stringify(games));
+    res.send();
+});
+
 
 app.post('/:gameId/admin/clearGame', function (req, res) {
     const gameId = req.params.gameId;
@@ -140,6 +166,17 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
     }
     addOrClearGame(gameId, true);
     res.send();
+});
+
+app.get('/admin/games', function (req, res) {
+    if(!validateAdmin(req, res)) {
+        return;
+    }
+    const gameObject = [];
+    Object.keys(games).forEach(function(key,index) {
+        gameObject.push(games[key]);
+    });
+    res.send(gameObject);
 });
 
 console.log('Dummy quiz-server listening on port ' +  port +'!');
@@ -165,6 +202,7 @@ function addOrClearGame(gameId, isClear) {
         return false;
     }
     games[gameId] = {};
+    games[gameId].name = gameId;
     games[gameId].startTime = 0;
     games[gameId].players = [];
     games[gameId].gameStats = [];
