@@ -14,11 +14,24 @@
     max-width: 100%;
 }
 
+.game-status-panel {
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 0.5rem;
+
+    .show-details-link {
+        float: right;
+        cursor: pointer;
+        color: blue;
+    }
+}
+
 img[usemap] {
     border: none;
     height: auto;
     max-width: 100%;
     width: auto;
+    cursor: pointer;
 }
 
 @function str-replace($string, $search, $replace: '') {

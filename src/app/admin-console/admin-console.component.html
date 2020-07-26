@@ -1,10 +1,58 @@
 <h1 class="text-center">Admin console</h1>
 <hr/>
 <div class="container-border container">
-	<h3>Lobby auswählen</h3>
-	<input class="w-100" type="text" [(ngModel)]="lobby" [placeholder]="'Lobby...'">
+	<!--<h3>Lobby auswählen</h3>
+	<input class="w-100" type="text" [(ngModel)]="lobby" [placeholder]="'Lobby...'">-->
 	<h3>Token</h3>
 	<input class="w-100" type="text" [(ngModel)]="token" [placeholder]="'token...'">
-	<button class="btn btn-primary mt-2 w-100" (click)="startGame()">Start game</button>
-	<button  class="btn btn-secondary mt-2 w-100" (click)="clearGame()">Clear game</button>
+	<div class="mt-2" *ngIf="games">
+		<h3>Spielname</h3>
+		<input class="w-100" type="text" [(ngModel)]="gameName" [placeholder]="'Spielname...'">
+		<button class="btn btn-primary"
+				*ngIf="gameName && gameName.trim() !== '' && gameName.trim().length > 2"
+				(click)="registerGame()">Spiel anlegen</button>
+	</div>
+	<ng-container *ngIf="games && games.length > 0">
+		<div *ngFor="let game of games">
+			<div class="game-status-panel w-100 mt-2">
+				<a class="show-details-link" (click)="toggleShowedGame(game.name)">
+					{{ gameShown(game) ? 'ausblenden' : 'anzeigen'}}
+				</a>
+				<h5>Spielname</h5>
+				{{game.name}}
+				<div *ngIf="gameShown(game)">
+					<hr>
+					<h5>Spielstatus</h5>
+					<ngb-alert [type]="'warning'" *ngIf="game.startTime > 0" [dismissible]="false">
+						<div class="text-center">Spiel wird gerade ausgeführt</div>
+					</ngb-alert>
+					<ngb-alert [type]="'success'" *ngIf="game.startTime === 0 && game.players && game.players.length > 0" [dismissible]="false">
+						<div class="text-center">Spiel kann gestartet werden</div>
+					</ngb-alert>
+					<ngb-alert [type]="'danger'" *ngIf="game.startTime === 0 && !game.players || game.players.length === 0" [dismissible]="false">
+						<div class="text-center">Noch keine Spieler angemeldet</div>
+					</ngb-alert>
+					<hr>
+					<div>
+						<h5>Spieler</h5>
+						<ul class="list-group mb-1" *ngIf="game.players">
+							<li class="list-group-item" *ngFor="let player of game.players">{{player}}</li>
+						</ul>
+					</div>
+					<hr>
+					<h5>Spielestatistik</h5>
+					<ul class="list-group mb-1" *ngIf="game.gameStats">
+						<li class="list-group-item" *ngFor="let gameStat of game.gameStats">
+							{{gameStat.username}} | {{(gameStat.finishedTime - game.startTime) / 1000}} Sek. | (+{{gameStat.penaltyTime}} Sek.)
+						</li>
+					</ul>
+					<hr>
+					<button class="btn btn-primary mt-2 w-100" (click)="startGame(game.name)">Spiel starten</button>
+					<button  class="btn btn-secondary mt-2 w-100" (click)="clearGame(game.name)">Spiel zurücksetzen</button>
+					<button  class="btn btn-danger mt-2 w-100" (click)="deleteGame(game.name)">Spiel löschen</button>
+				</div>
+			</div>
+		</div>
+	</ng-container>
+
 </div>
