@@ -46,5 +46,4 @@ testem.log
 Thumbs.db
 .pictureData
 /server/.token
-/server/cert.pem
-/server/key.pem
+/server/.cert-paths.txt
