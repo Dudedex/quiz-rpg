@@ -174,6 +174,8 @@ export class QuizComponent implements OnInit {
                         this.players = res.players;
                         const now = Date.now();
                         console.log(this.startTime > now);
+                        console.log('startTime ' + this.startTime);
+                        console.log('now ' + now);
                         if (this.startTime > now) {
                             console.log('blocking call');
                             this.blockCall = true;
