@@ -173,7 +173,9 @@ export class QuizComponent implements OnInit {
                         this.startTime = res.startTime as number;
                         this.players = res.players;
                         const now = Date.now();
+                        console.log(this.startTime > now);
                         if (this.startTime > now) {
+                            console.log('blocking call');
                             this.blockCall = true;
                             this.startWaitTimer(Math.round((this.startTime - now) / 1000));
                             setTimeout(() => {
