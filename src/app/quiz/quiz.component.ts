@@ -174,12 +174,12 @@ export class QuizComponent implements OnInit {
                         this.players = res.players;
                         const now = Date.now();
                         if (this.startTime > now) {
-                            this.startSubscription.unsubscribe();
                             this.blockCall = true;
                             this.startWaitTimer(Math.round((this.startTime - now) / 1000));
                             setTimeout(() => {
                                 this.progressQuiz();
                             }, this.startTime - now);
+                            this.startSubscription.unsubscribe();
                         }
                     });
                 }
