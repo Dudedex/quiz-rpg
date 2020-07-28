@@ -28,10 +28,10 @@
 		</div>
 	</div>
 	<div class="col-xs-12 mt-3" *ngIf="isWaitForStart()">
-		<ngb-alert [type]="'warning'" *ngIf="!startTime" [dismissible]="false">
+		<ngb-alert [type]="'warning'" *ngIf="!timeUntilStartInMs" [dismissible]="false">
 			<div class="text-center">Warte auf Host</div>
 		</ngb-alert>
-		<ngb-alert [type]="'success'"*ngIf="startTime" [dismissible]="false">
+		<ngb-alert [type]="'success'" *ngIf="timeUntilStartInMs" [dismissible]="false">
 			<div class="text-center"><strong>{{waitTime}}</strong></div>
 		</ngb-alert>
 		<ul class="list-group mb-1" *ngIf="players">

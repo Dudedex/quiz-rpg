@@ -42,13 +42,21 @@ app.get('/:gameId', function (req, res) {
         return;
     }
     var time = games[gameId].startTime;
-    if (time < Date.now() - 100000) {
+    if (time < Date.now() - 5000) {
         time = 0;
     }
-    res.send({
-        startTime: time,
-        players: games[gameId].players
-    });
+    if (time === 0) {
+        res.send({
+            timeUntilStartInMs: 0,
+            players: games[gameId].players
+        });
+    } else {
+        res.send({
+            timeUntilStartInMs: (time - Date.now()),
+            players: games[gameId].players
+        });
+    }
+
 });
 
 app.post('/:gameId/registerPlayer', function (req, res) {
@@ -68,7 +76,9 @@ app.post('/:gameId/registerPlayer', function (req, res) {
     }
     console.log('Player "' + username + '" signed up for the game');
     games[gameId].players.push(username);
-    res.send();
+    res.send({
+        quiz: games[gameId].quiz
+    });
 });
 
 app.post('/:gameId/finished', function (req, res) {
@@ -122,6 +132,7 @@ app.post('/:gameId/admin/startGame', function (req, res) {
 
 app.post('/:gameId/admin/registerGame', function (req, res) {
     const gameId = req.params.gameId;
+    const fileName = req.body.quizFileName;
     if (gameId === undefined
         || gameId.length < 3
         || games[gameId] !== undefined){
@@ -132,7 +143,11 @@ app.post('/:gameId/admin/registerGame', function (req, res) {
     if(!validateAdmin(req, res)) {
         return;
     }
-    addOrClearGame(gameId, false);
+    if (fileName === undefined) {
+        addOrClearGame(gameId, 'quiz-1.json', false);
+    } else {
+        addOrClearGame(gameId, fileName, false);
+    }
     res.send();
 });
 
@@ -164,7 +179,7 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
     if(!validateAdmin(req, res)) {
         return;
     }
-    addOrClearGame(gameId, true);
+    addOrClearGame(gameId, games[gameId].gameFileName,true);
     res.send();
 });
 
@@ -174,7 +189,9 @@ app.get('/admin/games', function (req, res) {
     }
     const gameObject = [];
     Object.keys(games).forEach(function(key,index) {
-        gameObject.push(games[key]);
+        if (key !== 'quiz' && key !== 'gameFileName') {
+            gameObject.push(games[key]);
+        }
     });
     res.send(gameObject);
 });
@@ -184,7 +201,7 @@ requiredToken = fs.readFileSync(tokenFilePath, {encoding:'utf8'});
 if (requiredToken) {
     requiredToken = requiredToken.trim();
 }
-addOrClearGame('show', false);
+addOrClearGame('show', 'quiz-1.json', false);
 
 function validateAdmin(req, res) {
     const providedToken = req.headers ? req.headers['authorization']: '';
@@ -197,7 +214,7 @@ function validateAdmin(req, res) {
     return true;
 }
 
-function addOrClearGame(gameId, isClear) {
+function addOrClearGame(gameId, quizFileName, isClear) {
     if (games[gameId] !== undefined && !isClear) {
         return false;
     }
@@ -206,5 +223,8 @@ function addOrClearGame(gameId, isClear) {
     games[gameId].startTime = 0;
     games[gameId].players = [];
     games[gameId].gameStats = [];
+    games[gameId].gameFileName = quizFileName;
+
+    games[gameId].quiz = JSON.parse(fs.readFileSync(path.join(__dirname, '/quizzes/' + quizFileName)));
     console.log('Game => ' + gameId + ' was registered');
 }

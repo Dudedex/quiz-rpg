@@ -285,15 +285,6 @@ export class TestQuiz {
             quiz.questions.push(question);
         }
 
-        quiz.questions.forEach((q) => {
-            for (let i = q.options.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * i);
-                const temp = q.options[i];
-                q.options[i] = q.options[j];
-                q.options[j] = temp;
-            }
-        });
-
         return quiz;
     }
 

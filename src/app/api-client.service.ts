@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {environment} from '../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ApiClientService {
 
-    private static BASE_PATH = 'https://vps31906144910.noezserver.de:3000/';
+    private static BASE_PATH = environment.apiUrl;
 
     constructor(private httpClient: HttpClient) { }
 
@@ -26,8 +27,7 @@ export class ApiClientService {
         return this.httpClient.post(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby) + 'stats', {});
     }
 
-    //admin
-
+    // admin
     public startGame(lobby: string, token: string) {
         const headers = new HttpHeaders().set('Authorization', token).set('Content-Type', 'application/json').set('Accept', 'application/json');
         return this.httpClient.post(ApiClientService.BASE_PATH + ApiClientService.streamLineLobby(lobby) + 'admin/startGame', {}, {

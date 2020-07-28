@@ -17,7 +17,7 @@ export class QuizComponent implements OnInit {
     public showLobbyError: boolean;
     public showUsernameError: boolean;
     public showWarning: boolean;
-    public startTime: number;
+    public timeUntilStartInMs: number;
     public startSubscription: Subscription;
     public statSubscription: Subscription;
     public waitTime: number;
@@ -41,7 +41,6 @@ export class QuizComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.quiz = TestQuiz.getQuizObject();
         this.activeQuestion = 0;
     }
 
@@ -75,10 +74,12 @@ export class QuizComponent implements OnInit {
         switch (this.quizSteps[this.currentStep]) {
             case QuizStep.LOBBY_SELECTION:
                 this.apiClient.registerPlayer(this.lobby, this.username).subscribe(
-                        () => {
+                        (res: any) => {
                             this.showLobbyError = false;
                             this.showUsernameError = false;
                             this.progressToNextStep();
+                            this.quiz = res.quiz;
+                            this.randomizeAnswers();
                         },
                         (error) => {
                             if (error.status === 404) {
@@ -94,7 +95,7 @@ export class QuizComponent implements OnInit {
                 this.quiz = TestQuiz.getQuizObject();
                 this.currentStep = QuizStep.LOBBY_SELECTION;
                 this.blockCall = false;
-                this.startTime = 0;
+                this.timeUntilStartInMs = 0;
                 this.activeQuestion = 0;
                 this.stats = [];
                 if (this.statSubscription) {
@@ -170,19 +171,15 @@ export class QuizComponent implements OnInit {
             this.startSubscription = interval(500).subscribe(() => {
                 if (!this.blockCall) {
                     this.apiClient.checkStartTime(this.lobby).subscribe((res: any) => {
-                        this.startTime = res.startTime as number;
+                        this.timeUntilStartInMs = res.timeUntilStartInMs as number;
                         this.players = res.players;
-                        const now = Date.now();
-                        console.log(this.startTime > now);
-                        console.log('startTime ' + this.startTime);
-                        console.log('now ' + now);
-                        if (this.startTime > now) {
+                        if (this.timeUntilStartInMs > 0) {
                             console.log('blocking call');
                             this.blockCall = true;
-                            this.startWaitTimer(Math.round((this.startTime - now) / 1000));
+                            this.startWaitTimer(Math.round((this.timeUntilStartInMs) / 1000));
                             setTimeout(() => {
                                 this.progressQuiz();
-                            }, this.startTime - now);
+                            }, this.timeUntilStartInMs);
                             this.startSubscription.unsubscribe();
                         }
                     });
@@ -195,4 +192,14 @@ export class QuizComponent implements OnInit {
         }
     }
 
+    private randomizeAnswers() {
+        this.quiz.questions.forEach((q) => {
+            for (let i = q.options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * i);
+                const temp = q.options[i];
+                q.options[i] = q.options[j];
+                q.options[j] = temp;
+            }
+        });
+    }
 }

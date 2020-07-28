@@ -3,6 +3,7 @@ import {Question} from '../models/question';
 import {AnswerOption} from '../models/answer-option';
 import {QuestionType} from '../models/question-type';
 import {AreaData} from '../models/area-data';
+import {ApiClientService} from '../api-client.service';
 
 @Component({
     selector: 'app-question',
@@ -31,7 +32,7 @@ export class QuestionComponent implements OnInit, OnChanges {
     public showRightAnswersHint: boolean;
     public wrongAnswerSpecial: string;
 
-    constructor() {
+    constructor(private apiClient: ApiClientService) {
     }
 
     ngOnInit() {
