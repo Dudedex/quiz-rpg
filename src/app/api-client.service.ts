@@ -15,6 +15,14 @@ export class ApiClientService {
         return this.httpClient.get(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby));
     }
 
+    public checkAnswer(lobby: string, userToken: string, questionId: string, answerIds: string[]) {
+        return this.httpClient.post(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby) + 'checkAnswer', {
+            userToken,
+            questionId,
+            answerIds
+        });
+    }
+
     public quizFinished(lobby: string, object: any) {
         return this.httpClient.post(ApiClientService.BASE_PATH + ApiClientService.streamLineLobby(lobby) + 'finished', object);
     }

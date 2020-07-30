@@ -17,6 +17,12 @@ export class QuestionComponent implements OnInit, OnChanges {
     @ViewChild('image') public image: ElementRef;
 
     @Input()
+    public userToken: string;
+
+    @Input()
+    public lobby: string;
+
+    @Input()
     public question: Question;
 
     @Output()
@@ -55,27 +61,34 @@ export class QuestionComponent implements OnInit, OnChanges {
         }
     }
 
-    public checkRadioOption(option: AnswerOption) {
+    public checkRadioOption(selectedAnswer: AnswerOption) {
         if (this.errorPenalty) {
             return;
         }
-        if (option.correct) {
-            this.questionAnsweredCorrectly();
-        } else {
-            this.wrongAnswerSpecial = option.wrongAnswerHint;
-            this.startErrorTimer();
+        for (const option of this.question.options) {
+            option.checked = false;
         }
+        selectedAnswer.checked = true;
+        this.checkAnswer();
     }
 
-    public checkCheckboxOptions() {
-        for (const answer of this.question.options) {
-            if ((answer.correct && !answer.checked) || (!answer.correct && answer.checked)) {
-                this.startErrorTimer();
-                return;
-            }
+    public checkAnswer() {
+        if (this.errorPenalty) {
+            return;
         }
-
-        this.questionAnsweredCorrectly();
+        const answerIds = this.question.options.filter(o => o.checked).map(o => o.uuid);
+        this.apiClient.checkAnswer(this.lobby, this.userToken, this.question.uuid, answerIds).subscribe((res: any) => {
+            if (res.correct) {
+                this.questionAnsweredCorrectly();
+            } else {
+                if (answerIds.length === 1) {
+                    this.wrongAnswerSpecial = this.question.options.find(a => a.uuid === answerIds[0]).wrongAnswerHint;
+                } else {
+                    this.wrongAnswerSpecial = undefined;
+                }
+                this.startErrorTimer();
+            }
+        });
     }
 
     public isCheckboxType() {
@@ -93,7 +106,10 @@ export class QuestionComponent implements OnInit, OnChanges {
     public areaClicked(area: AreaData) {
         area.checked = true;
         if (this.question.imageSearch.areaData.findIndex(ad => !ad.checked) === -1) {
-            this.questionAnsweredCorrectly();
+            this.apiClient.checkAnswer(this.lobby, this.userToken, this.question.uuid, []).subscribe((res: any) => {
+                // no chance to fail
+                this.questionAnsweredCorrectly();
+            });
         }
     }
 

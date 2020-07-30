@@ -36,14 +36,19 @@
 					<div>
 						<h5>Spieler</h5>
 						<ul class="list-group mb-1" *ngIf="game.players">
-							<li class="list-group-item" *ngFor="let player of game.players">{{player}}</li>
+							<li class="list-group-item" *ngFor="let player of game.players">
+                                {{player}}
+                                <span class="right">
+                                    Beantwortet: ({{getRightQuestions(game, player)}}/{{game.numOfQuestions}})
+                                </span>
+                            </li>
 						</ul>
 					</div>
 					<hr>
 					<h5>Spielestatistik</h5>
 					<ul class="list-group mb-1" *ngIf="game.gameStats">
 						<li class="list-group-item" *ngFor="let gameStat of game.gameStats">
-							{{gameStat.username}} | {{(gameStat.finishedTime - game.startTime) / 1000}} Sek. | (+{{gameStat.penaltyTime}} Sek.)
+							{{gameStat.username}} | {{(gameStat.finishedTime - game.startTime) / 1000}} Sek. | ({{gameStat.wrongAnswersCount}} Fehler)
 						</li>
 					</ul>
 					<hr>

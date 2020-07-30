@@ -1,21 +1,29 @@
-var express = require('express');
-var cors = require('cors');
+const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
+const {v4: uuidv4} = require('uuid');
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
+const TYPE_CHECKBOX = 0;
+const TYPE_RADIO = 1;
+const TYPE_IMAGESEARCH = 2;
+
 var app = express();
 var port = 3000;
 if (process.argv.length > 2) {
     port = parseInt(process.argv[2]);
 }
+var adminToken = '';
+
 var games = {};
-var requiredToken = '';
+var questionIdToQuestionMap = {};
+var rightAnswers = {};
+var userTokens = {};
+
 app.use(bodyParser.json());
 app.use(cors());
-
-var fs = require('fs');
-var path = require('path');
 var tokenFilePath = path.join(__dirname, '.token');
-
-var https = require('https');
 var options = undefined;
 if (fs.existsSync(".cert-paths.txt")) {
     const certificateFilePath = JSON.parse(fs.readFileSync('.cert-paths.txt'));
@@ -76,42 +84,78 @@ app.post('/:gameId/registerPlayer', function (req, res) {
     }
     console.log('Player "' + username + '" signed up for the game');
     games[gameId].players.push(username);
+    const userToken = uuidv4();
+    userTokens[userToken] = username;
     res.send({
-        quiz: games[gameId].quiz
+        quiz: games[gameId].quiz,
+        userToken
     });
+});
+
+app.post('/:gameId/checkAnswer', function (req, res) {
+    const gameId = req.params.gameId;
+    const questionId = req.body.questionId;
+    const userToken = req.body.userToken;
+    const answerIds = req.body.answerIds;
+    if (gameId === undefined
+        || games[gameId] === undefined
+        || questionId === undefined
+        || userToken === undefined
+        || userTokens[userToken] === undefined
+        || questionIdToQuestionMap[gameId] === undefined
+        || questionIdToQuestionMap[gameId][questionId] === undefined
+        || !Array.isArray(answerIds)) {
+        console.log('precheck failed')
+        console.log(userToken);
+        console.log(userTokens[userToken]);
+        res.status(400).send();
+        return;
+    }
+    const question = questionIdToQuestionMap[gameId][questionId];
+    if (question.type === TYPE_RADIO) {
+        checkRadioQuestion(question, gameId, answerIds, userToken, res);
+    }
+    if (question.type === TYPE_CHECKBOX) {
+        checkCheckboxQuestion(question, gameId, answerIds, userToken, res);
+    }
+    if (question.type === TYPE_IMAGESEARCH) {
+        checkImageSearchQuestion(question, gameId, userToken, res);
+    }
+    res.status(400).send();
 });
 
 app.post('/:gameId/finished', function (req, res) {
     const gameId = req.params.gameId;
-    const username = req.body.username;
-    var penaltyTime = req.body.penaltyTimes;
-    if (!penaltyTime) {
-        penaltyTime = 0;
-    }
+    const userToken = req.body.userToken;
     if (gameId === undefined
         || games[gameId] === undefined
-        || username === undefined
-        || games[gameId].players.indexOf(username) === -1) {
+        || userToken === undefined
+        || userTokens[userToken] === undefined) {
         res.status(400).send();
         return;
     }
+    const username = userTokens[userToken];
     console.log('Player "' + username + '" finished the game in (' + (Date.now() - games[gameId].startTime) + ' ms)');
+    var wrongAnswers = games[gameId].questionProgress[username].filter(q => !q.answeredCorrectly);
     games[gameId].gameStats.push({
         username,
         finishedTime: Date.now(),
-        penaltyTime: penaltyTime
+        wrongAnswersCount: wrongAnswers.length
     });
     res.send();
 });
 
-app.post('/:gameId/stats', function (req, res) {
+app.post('/:gameId/endGameStats', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined) {
         res.status(400).send();
         return;
     }
-    res.send(games[gameId].gameStats);
+    res.send({
+        gameStats: games[gameId].gameStats,
+        gameDetailsForUser: games[gameId].questionProgress,
+    });
 });
 
 app.post('/:gameId/admin/startGame', function (req, res) {
@@ -123,7 +167,7 @@ app.post('/:gameId/admin/startGame', function (req, res) {
         res.status(400).send();
         return;
     }
-    if(!validateAdmin(req, res)) {
+    if (!validateAdmin(req, res)) {
         return;
     }
     games[gameId].startTime = Date.now() + 5000;
@@ -135,12 +179,12 @@ app.post('/:gameId/admin/registerGame', function (req, res) {
     const fileName = req.body.quizFileName;
     if (gameId === undefined
         || gameId.length < 3
-        || games[gameId] !== undefined){
+        || games[gameId] !== undefined) {
         console.log('invalid game');
         res.status(400).send();
         return;
     }
-    if(!validateAdmin(req, res)) {
+    if (!validateAdmin(req, res)) {
         return;
     }
     if (fileName === undefined) {
@@ -155,16 +199,17 @@ app.post('/:gameId/admin/deleteGame', function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || gameId.length < 3
-        || games[gameId] === undefined){
+        || games[gameId] === undefined) {
         console.log('invalid game');
         res.status(400).send();
         return;
     }
-    if(!validateAdmin(req, res)) {
+    if (!validateAdmin(req, res)) {
         return;
     }
     delete games[gameId];
-    games = JSON.parse(JSON.stringify(games));
+    delete rightAnswers[gameId];
+    delete questionIdToQuestionMap[gameId];
     res.send();
 });
 
@@ -176,36 +221,47 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
         res.status(404).send();
         return;
     }
-    if(!validateAdmin(req, res)) {
+    if (!validateAdmin(req, res)) {
         return;
     }
-    addOrClearGame(gameId, games[gameId].gameFileName,true);
+    addOrClearGame(gameId, games[gameId].gameFileName, true);
     res.send();
 });
 
 app.get('/admin/games', function (req, res) {
-    if(!validateAdmin(req, res)) {
+    if (!validateAdmin(req, res)) {
         return;
     }
     const gameObject = [];
-    Object.keys(games).forEach(function(key,index) {
-        if (key !== 'quiz' && key !== 'gameFileName') {
-            gameObject.push(games[key]);
+    Object.keys(games).forEach(function (gameId, index) {
+        const game = games[gameId];
+        if (game) {
+            gameObject.push({
+                name: game.name,
+                startTime: game.startTime,
+                players: game.players,
+                numOfQuestions: game.numOfQuestions,
+                questionProgress: game.questionProgress,
+                gameStats: game.gameStats
+            });
         }
     });
     res.send(gameObject);
 });
 
-console.log('Dummy quiz-server listening on port ' +  port +'!');
-requiredToken = fs.readFileSync(tokenFilePath, {encoding:'utf8'});
-if (requiredToken) {
-    requiredToken = requiredToken.trim();
+console.log('Dummy quiz-server listening on port ' + port + '!');
+if (fs.existsSync(tokenFilePath)) {
+    adminToken = fs.readFileSync(tokenFilePath, {encoding: 'utf8'});
+    if (adminToken) {
+        adminToken = adminToken.trim();
+    }
 }
+
 addOrClearGame('show', 'quiz-1.json', false);
 
 function validateAdmin(req, res) {
-    const providedToken = req.headers ? req.headers['authorization']: '';
-    if (requiredToken !== providedToken) {
+    const providedToken = req.headers ? req.headers['authorization'] : '';
+    if (adminToken !== providedToken) {
         console.log('Invalid token skip throw 401');
         console.log('Provided Token was: ' + providedToken);
         res.status(401).send();
@@ -222,9 +278,75 @@ function addOrClearGame(gameId, quizFileName, isClear) {
     games[gameId].name = gameId;
     games[gameId].startTime = 0;
     games[gameId].players = [];
+    games[gameId].questionProgress = {};
     games[gameId].gameStats = [];
     games[gameId].gameFileName = quizFileName;
-
     games[gameId].quiz = JSON.parse(fs.readFileSync(path.join(__dirname, '/quizzes/' + quizFileName)));
+    rightAnswers[gameId] = {};
+    questionIdToQuestionMap[gameId] = {};
+    games[gameId].quiz.questions.forEach((q) => {
+        q.uuid = uuidv4();
+        rightAnswers[gameId][q.uuid] = [];
+        questionIdToQuestionMap[gameId][q.uuid] = q;
+        q.options.forEach((o) => {
+            o.uuid = uuidv4();
+            if (o.correct) {
+                rightAnswers[gameId][q.uuid].push(o.uuid);
+            }
+            delete o.correct;
+        });
+    });
+    games[gameId].numOfQuestions = games[gameId].quiz.questions.length;
     console.log('Game => ' + gameId + ' was registered');
 }
+
+function checkRadioQuestion(question, gameId, answerIds, userToken, res) {
+    if (answerIds.length > 1) {
+        res.status(400).send();
+        return;
+    }
+    const answeredCorrectly = rightAnswers[gameId][question.uuid].indexOf(answerIds[0]) > -1;
+    trackProgress(gameId, userToken, question, answeredCorrectly);
+    res.send({
+        correct: answeredCorrectly
+    });
+}
+
+function checkCheckboxQuestion(question, gameId, answerIds, userToken, res) {
+    for (var i = 0; i < question.options.length; i++) {
+        const answerOptionCorrect = rightAnswers[gameId][question.uuid].indexOf(question.options[i].uuid) !== -1;
+        const answerSelected = answerIds.indexOf(question.options[i].uuid) !== -1;
+        if ((answerOptionCorrect && !answerSelected) || (!answerOptionCorrect && answerSelected)) {
+            trackProgress(gameId, userToken, question, false);
+            res.send({
+                correct: false
+            });
+            return;
+        }
+    }
+    trackProgress(gameId, userToken, question, true);
+    res.send({
+        correct: true
+    });
+    return;
+}
+
+function checkImageSearchQuestion(question, gameId, userToken, res) {
+    trackProgress(gameId, userToken, question, true);
+    res.send({
+        correct: true
+    });
+}
+
+function trackProgress(gameId, userToken, question, answeredCorrectly) {
+    const username = userTokens[userToken];
+    if (!games[gameId].questionProgress[username]) {
+        games[gameId].questionProgress[username] = [];
+    }
+    games[gameId].questionProgress[username].push({
+        questionId: question.uuid,
+        time: Date.now(),
+        answeredCorrectly
+    })
+}
+

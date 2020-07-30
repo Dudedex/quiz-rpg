@@ -3,6 +3,7 @@ import {QuestionType} from './question-type';
 import {ImageSearch} from './image-search';
 
 export class Question {
+    public uuid: string;
     public type: QuestionType;
     public title: string;
     public searchedImage: ImageSearch;

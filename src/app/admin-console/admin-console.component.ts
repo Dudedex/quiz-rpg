@@ -59,4 +59,8 @@ export class AdminConsoleComponent implements OnInit {
     public deleteGame(gameName) {
         this.apiClient.deleteGame(this.token, gameName).subscribe(() => {});
     }
+
+    public getRightQuestions(game: Game, playerName: string) {
+        return game.questionProgress[playerName].filter(answer => answer.answeredCorrectly).length;
+    }
 }

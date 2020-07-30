@@ -5,6 +5,7 @@ import {ApiClientService} from '../api-client.service';
 import {QuizStep} from '../models/quiz-step';
 import {interval, Subscription} from 'rxjs';
 import {GameStats} from '../models/game-stats';
+import {EndgameStats} from '../models/endgame-stats';
 
 @Component({
     selector: 'app-quiz',
@@ -22,7 +23,8 @@ export class QuizComponent implements OnInit {
     public statSubscription: Subscription;
     public waitTime: number;
     public players: string[];
-    public stats: GameStats[] = [];
+    public endGameStats: EndgameStats;
+    public userToken: string;
 
     private currentStep: QuizStep;
     private quizSteps: QuizStep[] = [
@@ -77,6 +79,7 @@ export class QuizComponent implements OnInit {
                         (res: any) => {
                             this.showLobbyError = false;
                             this.showUsernameError = false;
+                            this.userToken = res.userToken;
                             this.progressToNextStep();
                             this.quiz = res.quiz;
                             this.randomizeAnswers();
@@ -97,7 +100,7 @@ export class QuizComponent implements OnInit {
                 this.blockCall = false;
                 this.timeUntilStartInMs = 0;
                 this.activeQuestion = 0;
-                this.stats = [];
+                this.endGameStats = new EndgameStats();
                 if (this.statSubscription) {
                     this.statSubscription.unsubscribe();
                 }
@@ -141,12 +144,14 @@ export class QuizComponent implements OnInit {
             return;
         }
         this.apiClient.quizFinished(this.lobby, {
-            username: this.username
+            username: this.username,
+            userToken: this.userToken
         }).subscribe(() => {
             this.currentStep += 1;
-            this.statSubscription = interval(500).subscribe(() => {
+            this.statSubscription = interval(1000).subscribe(() => {
                 this.apiClient.loadStats(this.lobby).subscribe((res: any) => {
-                    this.stats = res;
+                    this.endGameStats = res;
+                    console.log(this.endGameStats);
                 });
             });
         });
@@ -174,7 +179,6 @@ export class QuizComponent implements OnInit {
                         this.timeUntilStartInMs = res.timeUntilStartInMs as number;
                         this.players = res.players;
                         if (this.timeUntilStartInMs > 0) {
-                            console.log('blocking call');
                             this.blockCall = true;
                             this.startWaitTimer(Math.round((this.timeUntilStartInMs) / 1000));
                             setTimeout(() => {

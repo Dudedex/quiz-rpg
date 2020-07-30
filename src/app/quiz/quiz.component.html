@@ -41,6 +41,8 @@
 	</div>
 	<div class="col-xs-12 mt-3" *ngIf="isQuizStep()">
 		<app-question
+                [userToken]="userToken"
+                [lobby]="lobby"
 				[question]="getCurrentQuestion()"
 				(questionCorrect)="validateQuiz()"></app-question>
 	</div>
@@ -52,8 +54,8 @@
 			</div>
 		</ngb-alert>
 		<h5>Standings</h5>
-		<ul class="list-group mb-1" *ngIf="stats">
-			<li class="list-group-item" *ngFor="let stat of stats; let i = index">{{i + 1}}. {{stat.username}}</li>
+		<ul class="list-group mb-1" *ngIf="endGameStats && endGameStats.gameStats">
+			<li class="list-group-item" *ngFor="let stat of endGameStats.gameStats; let i = index">{{i + 1}}. {{stat.username}}</li>
 		</ul>
 		<button class="btn btn-secondary w-100 mt-2" (click)="progressQuiz()">Spiel verlassen</button>
 	</div>

@@ -47,7 +47,7 @@
 			Frage überspringen {{timeRemainingForSkip > 0 ? '(' + timeRemainingForSkip + ')': ''}}
 		</button>
 	</ng-container>
-	<button class="btn btn-primary w-100" [disabled]="errorPenalty" *ngIf="isCheckboxType()" (click)="checkCheckboxOptions()">
+	<button class="btn btn-primary w-100" [disabled]="errorPenalty" *ngIf="isCheckboxType()" (click)="checkAnswer()">
 		Antwort abgeben
 	</button>
 	<ngb-alert class="overlay-hint" [type]="'danger'" *ngIf="errorPenalty" [dismissible]="false">
