@@ -1,0 +1,28 @@
+<ng-container *ngIf="quiz">
+    <h4>Lobbyname</h4>
+    <ngb-alert [type]="'danger'" class="w-100" *ngIf="showInvalidQuizError" [dismissible]="false">
+        <div class="text-center">
+            Bitte geben Sie einen validen mindestens 4 Zeichen langen Lobbynamen an, dieser darf kein Leerzeichen enthalten
+        </div>
+    </ngb-alert>
+    <ngb-alert [type]="'danger'" class="w-100" *ngIf="showQuizCouldNotBeCreatedError" [dismissible]="false">
+        <div class="text-center">
+            Quiz konnte nicht erstellt werden
+        </div>
+    </ngb-alert>
+    <input class="w-100 mb-2" type="text" [(ngModel)]="quiz.name" [disabled]="!quiz.isNew" [placeholder]="'Lobbyname...'">
+    <h4>Fragen</h4>
+    <div class="mb-2" *ngFor="let question of quiz.questions">
+        <div class="w-100">
+            <strong>{{question.title}}</strong><span class="right">({{getQuestionType(question)}})</span>
+            <div *ngIf="question.type === questionTypes.RADIO || question.type === questionTypes.CHECKBOX">
+
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary w-100 mb-2" *ngIf="!tempQuestion" (click)="createNewQuestion()">Neue Frage hinzufügen</button>
+    <app-edit-question *ngIf="tempQuestion" [question]="tempQuestion" [isNewQuestion]="true" (questionAdded)="addQuestionToQuiz($event)"></app-edit-question>
+    <hr>
+    <button class="btn btn-primary w-100 mt-2" (click)="createOrUpdateQuiz()">Quiz {{quiz.isNew ? 'erstellen' : 'bearbeiten'}}</button>
+</ng-container>
+

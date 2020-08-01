@@ -1,0 +1,14 @@
+<h1 class="text-center">Spiele-Editor</h1>
+<hr/>
+<div class="container-border__wide question-manager container">
+    <ngb-alert [type]="'success'" class="w-100" *ngIf="showQuizCreatedHint" [dismissible]="false">
+        <div class="text-center">
+            Quiz wurde erstellt
+        </div>
+    </ngb-alert>
+    <h3>Token</h3>
+    <input class="w-100" type="password" [(ngModel)]="token" [placeholder]="'token...'">
+    <button class="btn btn-primary w-100 mt-2" *ngIf="!tempQuiz" (click)="createNewQuiz()">Neues Quiz erstellen</button>
+    <hr>
+    <app-edit-quiz [quiz]="tempQuiz" [token]="token" (quizCreated)="quizWasCreated()"></app-edit-quiz>
+</div>
