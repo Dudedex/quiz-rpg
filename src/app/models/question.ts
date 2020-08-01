@@ -6,10 +6,10 @@ export class Question {
     public uuid: string;
     public type: QuestionType;
     public title: string;
-    public searchedImage: ImageSearch;
     public options: AnswerOption[] = [];
     public imageSearch: ImageSearch;
     public wrongAnswerHint: string;
+    public wrongAnswerPenalty = 8;
     public rigthAnswerSequel: string;
     public rightAnswerScreenTime = 3;
 }

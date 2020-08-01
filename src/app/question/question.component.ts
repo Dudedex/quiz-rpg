@@ -12,7 +12,6 @@ import {ApiClientService} from '../api-client.service';
 export class QuestionComponent implements OnInit, OnChanges {
 
     static IMAGE_SEARCH_SKIP_TIME = 30;
-    static QUESTION_ERROR_PENALTY = 8;
 
     @ViewChild('image') public image: ElementRef;
 
@@ -30,7 +29,8 @@ export class QuestionComponent implements OnInit, OnChanges {
 
     public IMAGE_CONTAINER_MAX_WIDTH = 420;
     public errorPenalty: boolean;
-    public seconds: number;
+    public wrongAnswerPenaltySeconds: number;
+    public rightAnswerSequelSeconds: number;
     public questionedOpened: number;
     public skippingImageSearchPossible: boolean;
     public timeRemainingForSkip: number;
@@ -47,7 +47,7 @@ export class QuestionComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         this.errorPenalty = false;
-        this.seconds = undefined;
+        this.wrongAnswerPenaltySeconds = undefined;
         this.submitted = false;
         this.wrongAnswerSpecial = undefined;
         this.timeRemainingForSkip = undefined;
@@ -150,19 +150,29 @@ export class QuestionComponent implements OnInit, OnChanges {
             return;
         }
         this.errorPenalty = true;
-        this.countErrorTime(QuestionComponent.QUESTION_ERROR_PENALTY);
+        this.countErrorTime(this.question.wrongAnswerPenalty);
         setTimeout(() => {
             this.errorPenalty = false;
-        }, QuestionComponent.QUESTION_ERROR_PENALTY * 1000);
+        }, this.question.wrongAnswerPenalty * 1000);
     }
 
     private countErrorTime(timeInSeconds: number) {
         if (timeInSeconds <= 0) {
             return;
         }
-        this.seconds = timeInSeconds;
+        this.wrongAnswerPenaltySeconds = timeInSeconds;
         setTimeout(() => {
             this.countErrorTime(timeInSeconds - 1);
+        }, 1000);
+    }
+
+    private countSuccessSequelTime(timeInSeconds: number) {
+        if (timeInSeconds <= 0) {
+            return;
+        }
+        this.rightAnswerSequelSeconds = timeInSeconds;
+        setTimeout(() => {
+            this.countSuccessSequelTime(timeInSeconds - 1);
         }, 1000);
     }
 
@@ -171,6 +181,7 @@ export class QuestionComponent implements OnInit, OnChanges {
             this.submitted = true;
             if (this.question.rigthAnswerSequel) {
               this.showRightAnswersHint = true;
+              this.countSuccessSequelTime(this.question.rightAnswerScreenTime);
               setTimeout(() => {
                 this.showRightAnswersHint = false;
                 this.questionCorrect.emit();

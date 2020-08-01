@@ -10,13 +10,19 @@ import {HttpClientModule} from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {AppRoutingModule} from './app-routing/app-routing.module';
 import { AdminConsoleComponent } from './admin-console/admin-console.component';
+import { QuizManagerComponent } from './quiz-manager/quiz-manager.component';
+import { EditQuizComponent } from './quiz-manager/edit-quiz/edit-quiz.component';
+import { EditQuestionComponent } from './quiz-manager/edit-quiz/edit-question/edit-question.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         QuestionComponent,
         QuizComponent,
-        AdminConsoleComponent
+        AdminConsoleComponent,
+        QuizManagerComponent,
+        EditQuizComponent,
+        EditQuestionComponent
     ],
     imports: [
         BrowserModule,

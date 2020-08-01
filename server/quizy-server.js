@@ -190,7 +190,7 @@ app.post('/:gameId/admin/registerGame', function (req, res) {
     if (fileName === undefined) {
         addOrClearGame(gameId, 'quiz-1.json', false);
     } else {
-        addOrClearGame(gameId, fileName, false);
+        addOrClearGame(gameId, 'custom-quiz/' + fileName + '.json', false);
     }
     res.send();
 });
@@ -210,7 +210,7 @@ app.post('/:gameId/admin/deleteGame', function (req, res) {
     delete games[gameId];
     delete rightAnswers[gameId];
     delete questionIdToQuestionMap[gameId];
-    res.send();
+    res.sendStatus(204);
 });
 
 
@@ -225,7 +225,7 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
         return;
     }
     addOrClearGame(gameId, games[gameId].gameFileName, true);
-    res.send();
+    res.sendStatus(204);
 });
 
 app.get('/admin/games', function (req, res) {
@@ -247,6 +247,28 @@ app.get('/admin/games', function (req, res) {
         }
     });
     res.send(gameObject);
+});
+
+app.post('/admin/quiz/createOrUpdate', function (req, res) {
+    if (!validateAdmin(req, res)) {
+        return;
+    }
+    const customQuizzesBasePath = 'quizzes/custom-quiz/'
+    const quiz = req.body;
+    if (!quiz.isNew) {
+        if (!fs.existsSync(customQuizzesBasePath + quiz.name + '.json')) {
+            res.sendStatus(400);
+            return;
+        }
+    } else  {
+        if (fs.existsSync(customQuizzesBasePath + quiz.name + '.json')) {
+            res.sendStatus(400);
+            return;
+        }
+        quiz.id = uuidv4();
+    }
+    fs.writeFileSync(customQuizzesBasePath + quiz.name + '.json', JSON.stringify(quiz), {encoding: 'utf8'});
+    res.sendStatus(204);
 });
 
 console.log('Dummy quiz-server listening on port ' + port + '!');

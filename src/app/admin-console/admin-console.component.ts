@@ -12,6 +12,7 @@ export class AdminConsoleComponent implements OnInit {
 
     public token: string;
     public gameName: string;
+    public gameFile: string;
     public gamesSubscription: Subscription;
     public games: Game[];
     public showedGames: string [] = [];
@@ -53,7 +54,7 @@ export class AdminConsoleComponent implements OnInit {
     }
 
     public registerGame() {
-        this.apiClient.registerGame(this.token, this.gameName).subscribe(() => {});
+        this.apiClient.registerGame(this.token, this.gameName, this.gameFile).subscribe(() => {});
     }
 
     public deleteGame(gameName) {

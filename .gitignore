@@ -47,3 +47,4 @@ Thumbs.db
 .pictureData
 /server/.token
 /server/.cert-paths.txt
+/server/quizzes/custom-quiz/*

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../environments/environment';
+import {Quiz} from './models/quiz';
 
 @Injectable({
     providedIn: 'root'
@@ -57,9 +58,11 @@ export class ApiClientService {
         });
     }
 
-    public registerGame(token: string, gameName: string){
+    public registerGame(token: string, gameName: string, gameFile: string) {
         const headers = new HttpHeaders().set('Authorization', token);
-        return this.httpClient.post(ApiClientService.BASE_PATH  + gameName + '/admin/registerGame',{}, {
+        return this.httpClient.post(ApiClientService.BASE_PATH  + gameName + '/admin/registerGame',{
+            quizFileName: gameFile
+        }, {
             headers
         });
     }
@@ -67,6 +70,13 @@ export class ApiClientService {
     public deleteGame(token: string, gameName: string){
         const headers = new HttpHeaders().set('Authorization', token);
         return this.httpClient.post(ApiClientService.BASE_PATH  + gameName + '/admin/deleteGame', {}, {
+            headers
+        });
+    }
+
+    public createOrUpdateGame(token: string, quiz: Quiz) {
+        const headers = new HttpHeaders().set('Authorization', token);
+        return this.httpClient.post(ApiClientService.BASE_PATH  + 'admin/quiz/createOrUpdate', quiz, {
             headers
         });
     }
