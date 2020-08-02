@@ -6,6 +6,7 @@ import {QuizManagerHelper} from '../../utility/quiz-manager-helper';
 import {QuestionError} from '../../../models/question-error';
 import {ImageSearch} from '../../../models/image-search';
 import {AreaData} from '../../../models/area-data';
+import {DropdownOption} from '../../../models/dropdown-option';
 
 @Component({
     selector: 'app-edit-question',
@@ -22,8 +23,11 @@ export class EditQuestionComponent implements OnInit {
     public questionAdded = new EventEmitter<Question>();
 
     public questionTypeOptions: QuestionTypeOption[];
-    public selectedOption: QuestionTypeOption;
+    public areaShapeOptions: DropdownOption[];
+    public selectedQuestionTypeOption: QuestionTypeOption;
+    public selectedAreaShapeOption: DropdownOption;
     public errorsWithQuestion: QuestionError[] = [];
+    public tempAreaData = new AreaData();
 
     constructor() {
     }
@@ -42,13 +46,23 @@ export class EditQuestionComponent implements OnInit {
             key: QuestionType.IMAGE_SEARCH,
             displayValue: 'Wimmelbild'
         });
+        this.areaShapeOptions = [];
+        this.areaShapeOptions.push({
+            key: 'rect',
+            displayValue: 'Rechteckig'
+        });
+        this.areaShapeOptions.push({
+            key: 'circle',
+            displayValue: 'Rund'
+        });
+        this.selectedAreaShapeOption = this.areaShapeOptions[0];
         if (this.question) {
             this.selectQuestionType(this.questionTypeOptions.find(to => to.key === this.question.type));
         }
     }
 
     public selectQuestionType(questionTypeOption: QuestionTypeOption) {
-        this.selectedOption = questionTypeOption;
+        this.selectedQuestionTypeOption = questionTypeOption;
         this.question.type = questionTypeOption.key;
     }
 
@@ -125,12 +139,22 @@ export class EditQuestionComponent implements OnInit {
         console.log(event);
         const areaData = new AreaData();
         areaData.description = '';
-        areaData.shape = 'rect';
+        areaData.shape = this.selectedAreaShapeOption.key as 'rect' | 'circle';
         areaData.x1 = event.offsetX - 20;
         areaData.y1 = event.offsetY - 20;
         areaData.x2 = event.offsetX + 20;
         areaData.y2 = event.offsetY + 20;
-        this.question.imageSearch.areaData.push(areaData);
+        areaData.radius = 15;
+        this.tempAreaData = areaData;
+    }
+
+    public addArea() {
+        this.question.imageSearch.areaData.push(this.tempAreaData);
+        this.tempAreaData = undefined;
+    }
+
+    public deleteArea(index: number) {
+        this.question.imageSearch.areaData.splice(index, 1);
     }
 
     public getCordsForArea(area: AreaData) {

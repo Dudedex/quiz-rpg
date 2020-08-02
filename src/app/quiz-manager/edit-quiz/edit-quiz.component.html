@@ -12,11 +12,12 @@
     </ngb-alert>
     <input class="w-100 mb-2" type="text" [(ngModel)]="quiz.name" [disabled]="!quiz.isNew" [placeholder]="'Lobbyname...'">
     <h4>Fragen</h4>
-    <div class="mb-2" *ngFor="let question of quiz.questions">
-        <div class="w-100">
-            <strong>{{question.title}}</strong><span class="right">({{getQuestionType(question)}})</span>
+    <div class="mb-2" *ngFor="let question of quiz.questions; let i = index">
+        <div class="w-100 p-1">
             <div *ngIf="question.type === questionTypes.RADIO || question.type === questionTypes.CHECKBOX">
-
+                <div class="left w-48">
+                    {{(i + 1) + '.'}}<span class="ml-2"><strong>{{question.title}}</strong></span><span class="right">({{getQuestionType(question)}})</span>
+                </div>
             </div>
         </div>
     </div>

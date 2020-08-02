@@ -1,60 +1,74 @@
 .container-border {
-    max-width: 450px !important;
-    &__wide {
-      max-width: 800px
-    }
+  max-width: 450px !important;
+
+  &__wide {
+    max-width: 800px
+  }
 }
 
 .text-center {
-    text-align: center;
+  text-align: center;
 }
 
 .text-left {
-    text-align: left;
+  text-align: left;
 }
 
 .max-width {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 .game-status-panel {
-    border: 1px solid black;
-    border-radius: 3px;
-    padding: 0.5rem;
+  border: 1px solid black;
+  border-radius: 3px;
+  padding: 0.5rem;
 
-    .show-details-link {
-        float: right;
-        cursor: pointer;
-        color: blue;
-    }
+  .show-details-link {
+    float: right;
+    cursor: pointer;
+    color: blue;
+  }
 }
 
 .image-search-creator {
+  &__rect {
     border: 3px solid blue;
     position: absolute;
+    border-radius: 0;
+  }
+
+  &__circle {
+    border: 3px solid blue;
+    position: absolute;
+    border-radius: 50%;
+  }
 }
 
-.image-search-creator-container{
-    position: relative;
-    max-width: 420px;
+.image-search-creator-container {
+  position: relative;
+  max-width: 420px;
 }
 
 .right {
   float: right;
 }
 
+.left {
+  float: left;
+}
+
 .question-container {
-    position: relative;
+  position: relative;
 }
 
 .overlay-hint {
-    z-index: 2;
-    position: absolute !important;
-    margin: -0.2rem !important;
-    top:0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  z-index: 2;
+  position: absolute !important;
+  margin: -0.2rem !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .clearfix {
@@ -62,40 +76,40 @@
 }
 
 img[usemap] {
-    border: none;
-    height: auto;
-    max-width: 100%;
-    width: auto;
-    cursor: pointer;
+  border: none;
+  height: auto;
+  max-width: 100%;
+  width: auto;
+  cursor: pointer;
 }
 
 @function str-replace($string, $search, $replace: '') {
-    $index: str-index($string, $search);
+  $index: str-index($string, $search);
 
-    @if $index {
-        @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
-    }
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
 
-    @return $string;
+  @return $string;
 }
 
 @media (min-width: 800px) {
-    body {
-        zoom: 1.25;
-    }
+  body {
+    zoom: 1.25;
+  }
 
-    .question-manager {
-      zoom: 0.8;
-    }
+  .question-manager {
+    zoom: 0.8;
+  }
 }
 
 
 $widths: ('0', '10', '20', '25', '30', '40', '45', '48', '50', '60', '70', '75', '80', '90', '100');
 
 @each $width in $widths {
-    .w-#{$width} {
-        width: #{$width}#{unquote('%')} !important;
-    }
+  .w-#{$width} {
+    width: #{$width}#{unquote('%')} !important;
+  }
 }
 
 /* Importing Bootstrap SCSS file. */

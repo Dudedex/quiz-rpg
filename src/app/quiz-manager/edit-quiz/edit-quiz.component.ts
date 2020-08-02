@@ -63,7 +63,7 @@ export class EditQuizComponent implements OnInit {
     }
     
     public createOrUpdateQuiz() {
-        if (this.quiz.name && this.quiz.name.trim().length > 3 && this.quiz.name.indexOf(' ') === -1) {
+        if (this.quiz.name && this.quiz.name.trim().length > 3 && this.quiz.name.indexOf(' ') === -1 && this.quiz.questions && this.quiz.questions.length > 0) {
             this.showInvalidQuizError = false;
             this.apiClientService.createOrUpdateGame(this.token, this.quiz).subscribe((res) => {
                 this.quizCreated.emit();

@@ -9,7 +9,7 @@ export class QuizManagerComponent implements OnInit {
 
     public token: string;
     public tempQuiz: Quiz;
-    public showQuizCreatedHint:boolean;
+    public showQuizCreatedHint: boolean;
 
     constructor() {
     }
