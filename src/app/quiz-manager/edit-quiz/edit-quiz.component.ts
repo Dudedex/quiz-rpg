@@ -2,9 +2,9 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Quiz} from '../../models/quiz';
 import {Question} from '../../models/question';
 import {QuestionType} from '../../models/question-type';
-import {AnswerOption} from '../../models/answer-option';
 import {QuizManagerHelper} from '../utility/quiz-manager-helper';
 import {ApiClientService} from '../../api-client.service';
+import {ImageSearch} from '../../models/image-search';
 
 @Component({
     selector: 'app-edit-quiz',
@@ -48,6 +48,8 @@ export class EditQuizComponent implements OnInit {
     public createNewQuestion() {
         this.tempQuestion = new Question();
         this.tempQuestion.type = QuestionType.RADIO;
+        this.tempQuestion.imageSearch = new ImageSearch();
+        this.tempQuestion.imageSearch.areaData = [];
         this.tempQuestion.options = [];
         this.tempQuestion.options.push(QuizManagerHelper.getDummyAnswer());
         this.tempQuestion.options.push(QuizManagerHelper.getDummyAnswer());

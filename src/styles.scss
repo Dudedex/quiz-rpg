@@ -29,6 +29,16 @@
     }
 }
 
+.image-search-creator {
+    border: 3px solid blue;
+    position: absolute;
+}
+
+.image-search-creator-container{
+    position: relative;
+    max-width: 420px;
+}
+
 .right {
   float: right;
 }

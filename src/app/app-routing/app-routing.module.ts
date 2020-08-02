@@ -10,11 +10,19 @@ const routes: Routes = [
         component: QuizComponent,
     },
     {
+        path: 'quiz',
+        component: QuizComponent,
+    },
+    {
+        path: 'quiz/:lobby',
+        component: QuizComponent,
+    },
+    {
         path: 'admin',
         component: AdminConsoleComponent,
     },
     {
-        path: 'quiz-manager',
+        path: 'admin/quiz-manager',
         component: QuizManagerComponent,
     }
 ];

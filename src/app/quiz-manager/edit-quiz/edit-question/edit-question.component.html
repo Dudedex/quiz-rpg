@@ -1,81 +1,106 @@
 <h5>Frage {{isNewQuestion ? 'erstellen' : 'bearbeiten'}}</h5>
 <div class="" *ngIf="question">
-    <div class="w-48 right">
-        <h5>Fragentyp</h5>
-        <div ngbDropdown class="w-100" *ngIf="questionTypeOptions">
-            <button class="btn btn-outline-secondary w-100" ngbDropdownToggle>{{selectedOption.displayValue}}</button>
-            <div ngbDropdownMenu aria-labelledby="Fragentyp">
-                <button ngbDropdownItem *ngFor="let questionTypeOption of questionTypeOptions"
-                        (click)="selectQuestionType(questionTypeOption)">
-                    {{questionTypeOption.displayValue}}
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="w-48">
-        <h5>Frage</h5>
-        <input class="w-100" type="text" [(ngModel)]="question.title" [required]="true" [placeholder]="'Frage...'">
-    </div>
-    <div class="clearfix mt-3">
-        <div class="w-48 right">
-            <h5>Meldung bei richtiger Antwort</h5>
-            <ngb-alert [type]="'success'" [dismissible]="false">
-                <div>
-                    <textarea class="ml-2 w-100"  [(ngModel)]="question.rigthAnswerSequel" [placeholder]="'Meldung...'"></textarea>
-                </div>
-                <div>
-                    <strong>Anzeigedauer:</strong> <input class="ml-2" type="number" [(ngModel)]="question.rightAnswerScreenTime" step="1" [min]="0">
-                </div>
-            </ngb-alert>
-            <h5>Standardmeldung bei falscher Antwort</h5>
-            <ngb-alert [type]="'danger'"  [dismissible]="false">
-                <div>
-                    <textarea class="ml-2 w-100" [(ngModel)]="question.wrongAnswerHint" [placeholder]="'Meldung...'"></textarea>
-                </div>
-                <div>
-                    <strong>Anzeigedauer:</strong> <input class="ml-2" type="number" [(ngModel)]="question.wrongAnswerPenalty" step="1" [min]="3">
-                </div>
-            </ngb-alert>
-        </div>
-        <div class="w-48">
-            <h5>Antworten</h5>
-            <div *ngIf="isRadio() || isCheckbox()">
-                <ngb-alert [type]="'warning'" *ngIf="isCheckbox()" [dismissible]="false">
-                    <div class="text-center">Alle richtigen Antworten müssen vom Spieler angehakt werden damit die Frage
-                        richtig beantwortet ist
-                    </div>
-                </ngb-alert>
-                <ngb-alert [type]="'warning'" *ngIf="isRadio()" [dismissible]="false">
-                    <div class="text-center">Eine richtige Antwort muss vom Spieler angeklickt werden damit die Frage
-                        richtig beantwortet ist
-                    </div>
-                </ngb-alert>
-                <div class="content" *ngFor="let option of question.options; index as i">
-                    <label class="btn btn-info w-100 text-left" for="question_{{i}}">
-                        <input type="checkbox" id="question_{{i}}" [(ngModel)]="option.correct">
-                        <input class="w-90 ml-2" type="text" [(ngModel)]="option.text" [placeholder]="'Antwort...'">
-                        <button class="btn btn-secondary right pl-1 pr-1 pt-0 pb-0" (click)="deleteAnswerOption(i)">X</button>
-                    </label>
-                    <input class="ml-5 w-90 mb-2" type="text" *ngIf="!option.correct" [(ngModel)]="option.wrongAnswerHint"
-                           [placeholder]="'Falsche Antwort => Hinweis für Spieler...'">
-                </div>
-                <button class="btn btn-primary w-100" (click)="addQuestionAnswerOption()">Neue Antwortoption hinzufügen</button>
-            </div>
-        </div>
-        <hr class="clearfix">
-        <div class="w-100">
-            <ngb-alert [type]="'danger'" *ngIf="errorsWithQuestion && errorsWithQuestion.length > 0" [dismissible]="false">
-                <h5>Frage kann nicht hinzugefügt werden!</h5>
-                <div>
-                    <strong>Bitte stellen Sie sicher dass:</strong>
-                </div>
-                <ul>
-                    <li *ngFor="let error of errorsWithQuestion">
-                        {{getDisplayValueForError(error)}}
-                    </li>
-                </ul>
-            </ngb-alert>
-            <button class="btn btn-primary w-100" (click)="validateQuestionAndSubmit()">Frage zu Quiz hinzufügen</button>
-        </div>
-    </div>
+	<div class="w-48 right">
+		<h5>Fragentyp</h5>
+		<div ngbDropdown class="w-100" *ngIf="questionTypeOptions">
+			<button class="btn btn-outline-secondary w-100" ngbDropdownToggle>{{selectedOption.displayValue}}</button>
+			<div ngbDropdownMenu aria-labelledby="Fragentyp">
+				<button ngbDropdownItem *ngFor="let questionTypeOption of questionTypeOptions"
+						(click)="selectQuestionType(questionTypeOption)">
+					{{questionTypeOption.displayValue}}
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="w-48">
+		<h5>Frage</h5>
+		<input class="w-100" type="text" [(ngModel)]="question.title" [required]="true" [placeholder]="'Frage...'">
+	</div>
+	<div class="clearfix mt-3">
+		<div class="w-48 right">
+			<h5>Meldung bei richtiger Antwort</h5>
+			<ngb-alert [type]="'success'" [dismissible]="false">
+				<div>
+					<textarea class="ml-2 w-100"  [(ngModel)]="question.rigthAnswerSequel" [placeholder]="'Meldung...'"></textarea>
+				</div>
+				<div>
+					<strong>Anzeigedauer:</strong> <input class="ml-2" type="number" [(ngModel)]="question.rightAnswerScreenTime" step="1" [min]="0">
+				</div>
+			</ngb-alert>
+			<h5>Standardmeldung bei falscher Antwort</h5>
+			<ngb-alert [type]="'danger'"  [dismissible]="false">
+				<div>
+					<textarea class="ml-2 w-100" [(ngModel)]="question.wrongAnswerHint" [placeholder]="'Meldung...'"></textarea>
+				</div>
+				<div>
+					<strong>Anzeigedauer:</strong> <input class="ml-2" type="number" [(ngModel)]="question.wrongAnswerPenalty" step="1" [min]="3">
+				</div>
+			</ngb-alert>
+		</div>
+		<div class="w-48">
+			<div *ngIf="isRadio() || isCheckbox()">
+				<h5>Antworten</h5>
+				<ngb-alert [type]="'warning'" *ngIf="isCheckbox()" [dismissible]="false">
+					<div class="text-center">Alle richtigen Antworten müssen vom Spieler angehakt werden damit die Frage
+						richtig beantwortet ist
+					</div>
+				</ngb-alert>
+				<ngb-alert [type]="'warning'" *ngIf="isRadio()" [dismissible]="false">
+					<div class="text-center">Eine richtige Antwort muss vom Spieler angeklickt werden damit die Frage
+						richtig beantwortet ist
+					</div>
+				</ngb-alert>
+				<div class="content" *ngFor="let option of question.options; index as i">
+					<label class="btn btn-info w-100 text-left" for="question_{{i}}">
+						<input type="checkbox" id="question_{{i}}" [(ngModel)]="option.correct">
+						<input class="w-90 ml-2" type="text" [(ngModel)]="option.text" [placeholder]="'Antwort...'">
+						<button class="btn btn-secondary right pl-1 pr-1 pt-0 pb-0" (click)="deleteAnswerOption(i)">X</button>
+					</label>
+					<input class="ml-5 w-90 mb-2" type="text" *ngIf="!option.correct" [(ngModel)]="option.wrongAnswerHint"
+						   [placeholder]="'Falsche Antwort => Hinweis für Spieler...'">
+				</div>
+				<button class="btn btn-primary w-100" (click)="addQuestionAnswerOption()">Neue Antwortoption hinzufügen</button>
+			</div>
+			<div *ngIf="isImageSearch()">
+				<h5>Wimmelbild</h5>
+				<div>
+					<input type="file" accept="image/*" (change)="imageChangeListener($event)">
+				</div>
+
+				<ng-container *ngIf="question.imageSearch.imageData">
+					<div class="mt-2 image-search-creator-container">
+						<img 	[src]="question.imageSearch.imageData"
+								width="420px"
+								(click)="clickedCoords($event)"
+								#image>
+						<ng-container *ngFor="let area of question.imageSearch.areaData; let i = index">
+							<div class="image-search-creator"
+								 [style.top.px]="area.y1"
+								 [style.left.px]="area.x1"
+								 [style.right.px]="420 - area.x2"
+								 [style.bottom.px]="image.height - area.y2"
+							></div>
+						</ng-container>
+					</div>
+
+				</ng-container>
+
+			</div>
+		</div>
+		<hr class="clearfix">
+		<div class="w-100">
+			<ngb-alert [type]="'danger'" *ngIf="errorsWithQuestion && errorsWithQuestion.length > 0" [dismissible]="false">
+				<h5>Frage kann nicht hinzugefügt werden!</h5>
+				<div>
+					<strong>Bitte stellen Sie sicher dass:</strong>
+				</div>
+				<ul>
+					<li *ngFor="let error of errorsWithQuestion">
+						{{getDisplayValueForError(error)}}
+					</li>
+				</ul>
+			</ngb-alert>
+			<button class="btn btn-primary w-100" (click)="validateQuestionAndSubmit()">Frage zu Quiz hinzufügen</button>
+		</div>
+	</div>
 </div>

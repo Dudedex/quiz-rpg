@@ -4,6 +4,8 @@ import {QuestionType} from '../../../models/question-type';
 import {QuestionTypeOption} from '../../../models/question-type-option';
 import {QuizManagerHelper} from '../../utility/quiz-manager-helper';
 import {QuestionError} from '../../../models/question-error';
+import {ImageSearch} from '../../../models/image-search';
+import {AreaData} from '../../../models/area-data';
 
 @Component({
     selector: 'app-edit-question',
@@ -58,6 +60,10 @@ export class EditQuestionComponent implements OnInit {
         return this.question.type === QuestionType.RADIO;
     }
 
+    public isImageSearch() {
+        return this.question.type === QuestionType.IMAGE_SEARCH;
+    }
+
     public addQuestionAnswerOption() {
         this.question.options.push(QuizManagerHelper.getDummyAnswer());
     }
@@ -103,6 +109,40 @@ export class EditQuestionComponent implements OnInit {
             case QuestionError.NO_CORRECT_ANSWER:
                 return 'mindestens eine Antwort die richtige ist';
         }
+    }
+
+    public imageChangeListener($event): void {
+        const file: File = $event.target.files[0];
+        const myReader: FileReader = new FileReader();
+
+        myReader.onloadend = (e) => {
+            this.question.imageSearch.imageData = myReader.result as string;
+        }
+        myReader.readAsDataURL(file);
+    }
+
+    public clickedCoords(event: any) {
+        console.log(event);
+        const areaData = new AreaData();
+        areaData.description = '';
+        areaData.shape = 'rect';
+        areaData.x1 = event.offsetX - 20;
+        areaData.y1 = event.offsetY - 20;
+        areaData.x2 = event.offsetX + 20;
+        areaData.y2 = event.offsetY + 20;
+        this.question.imageSearch.areaData.push(areaData);
+    }
+
+    public getCordsForArea(area: AreaData) {
+        // 420 container max-width
+        switch (area.shape) {
+        case 'circle':
+            return area.x1 + ',' + area.y1 + ',' + area.radius;
+        case 'rect':
+            return area.x1 + ',' + area.y1 + ',' + area.x2 + ',' + area.y2;
+        }
+        console.error('Shape ' +  area.shape + ' has no handler yet');
+        return '';
     }
 
     private questionIsValid() {

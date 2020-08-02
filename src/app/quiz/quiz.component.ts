@@ -6,6 +6,7 @@ import {QuizStep} from '../models/quiz-step';
 import {interval, Subscription} from 'rxjs';
 import {GameStats} from '../models/game-stats';
 import {EndgameStats} from '../models/endgame-stats';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
     selector: 'app-quiz',
@@ -15,6 +16,7 @@ export class QuizComponent implements OnInit {
 
     public username: string;
     public lobby: string = 'show';
+    public lobbySetByPath: boolean;
     public showLobbyError: boolean;
     public showUsernameError: boolean;
     public showWarning: boolean;
@@ -38,8 +40,16 @@ export class QuizComponent implements OnInit {
     private quiz: Quiz;
     private blockCall: boolean;
 
-    constructor(private apiClient: ApiClientService) {
+    constructor(private apiClient: ApiClientService,
+                private route: ActivatedRoute) {
         this.currentStep = 0;
+        this.lobbySetByPath = false;
+        this.route.params.subscribe( params => {
+            if (params.lobby) {
+                this.lobby = params.lobby;
+                this.lobbySetByPath = true;
+            }
+        });
     }
 
     ngOnInit() {
