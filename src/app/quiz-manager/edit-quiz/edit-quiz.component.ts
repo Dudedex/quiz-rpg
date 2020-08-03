@@ -45,6 +45,10 @@ export class EditQuizComponent implements OnInit {
         }
     }
 
+    public deleteQuestion(index: number) {
+        this.quiz.questions.splice(index, 1);
+    }
+
     public createNewQuestion() {
         this.tempQuestion = new Question();
         this.tempQuestion.type = QuestionType.RADIO;

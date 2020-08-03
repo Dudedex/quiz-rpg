@@ -33,7 +33,7 @@ export class ApiClientService {
     }
 
     public loadStats(lobby: string) {
-        return this.httpClient.post(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby) + 'stats', {});
+        return this.httpClient.post(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby) + 'endGameStats', {});
     }
 
     // admin

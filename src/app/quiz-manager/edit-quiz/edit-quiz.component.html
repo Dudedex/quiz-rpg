@@ -12,13 +12,14 @@
     </ngb-alert>
     <input class="w-100 mb-2" type="text" [(ngModel)]="quiz.name" [disabled]="!quiz.isNew" [placeholder]="'Lobbyname...'">
     <h4>Fragen</h4>
-    <div class="mb-2" *ngFor="let question of quiz.questions; let i = index">
-        <div class="w-100 p-1">
-            <div *ngIf="question.type === questionTypes.RADIO || question.type === questionTypes.CHECKBOX">
-                <div class="left w-48">
-                    {{(i + 1) + '.'}}<span class="ml-2"><strong>{{question.title}}</strong></span><span class="right">({{getQuestionType(question)}})</span>
-                </div>
-            </div>
+    <div class="w-100 p-1">
+        <div class="left btn btn-info ml-2 mb-2 w-48" *ngFor="let question of quiz.questions; let i = index">
+            <span class="left">{{(i + 1) + '.'}}</span>
+            <span class="ml-2">
+                <strong>{{question.title}}</strong>
+            </span>
+            <button class="btn btn-secondary right ml-2 pl-1 pr-1 pt-0 pb-0" (click)="deleteQuestion(i)">X</button>
+            <span class="right">({{getQuestionType(question)}})</span>
         </div>
     </div>
     <button class="btn btn-primary w-100 mb-2" *ngIf="!tempQuestion" (click)="createNewQuestion()">Neue Frage hinzufügen</button>

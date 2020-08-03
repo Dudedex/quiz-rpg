@@ -88,7 +88,7 @@
                             (x2/y2) (<input type="number" [(ngModel)]="tempAreaData.x2">/<input type="number" [(ngModel)]="tempAreaData.y2">)
                         </ng-container>
                         <ng-container *ngIf="'circle' === selectedAreaShapeOption.key">
-                            Radius (<input type="number" [(ngModel)]="tempAreaData.radius">)
+                            Radius (<input type="number" [min]="10" [(ngModel)]="tempAreaData.radius">)
                         </ng-container>
                         <button class="btn btn-primary w-100 mt-2" (click)="addArea()">Bereich hinzufügen</button>
                     </div>
@@ -99,48 +99,48 @@
                              (click)="clickedCoords($event)"
                              #image>
                         <ng-container *ngIf="tempAreaData">
-                            <div class="image-search-creator__rect" *ngIf="'rect' === selectedAreaShapeOption.key"
+                            <div class="image-search-creator__rect border-red" *ngIf="'rect' === selectedAreaShapeOption.key"
                                  [style.top.px]="tempAreaData.y1"
                                  [style.left.px]="tempAreaData.x1"
                                  [style.right.px]="420 - tempAreaData.x2"
                                  [style.bottom.px]="image.height - tempAreaData.y2"
                             ></div>
-                            <div class="image-search-creator__circle" *ngIf="'round' === selectedAreaShapeOption.key"
+                            <div class="image-search-creator__circle border-red" *ngIf="'circle' === selectedAreaShapeOption.key"
                                  [style.top.px]="tempAreaData.y1"
                                  [style.left.px]="tempAreaData.x1"
-                                 [style.right.px]="420 - tempAreaData.x2"
-                                 [style.bottom.px]="image.height - tempAreaData.y2"
+                                 [style.margin-top.px]="-tempAreaData.radius"
+                                 [style.margin-left.px]="-tempAreaData.radius"
+                                 [style.padding.px]="tempAreaData.radius"
                             ></div>
                         </ng-container>
 						<ng-container *ngFor="let area of question.imageSearch.areaData; let i = index">
-							<div class="image-search-creator__rect" *ngIf="'rect' === selectedAreaShapeOption.key"
+							<div class="image-search-creator__rect" *ngIf="'rect' === area.shape"
 								 [style.top.px]="area.y1"
 								 [style.left.px]="area.x1"
 								 [style.right.px]="420 - area.x2"
 								 [style.bottom.px]="image.height - area.y2"
 							></div>
-                            <div class="image-search-creator__circle" *ngIf="'round' === selectedAreaShapeOption.key"
-                                 [style.top.px]="area.y1"
-                                 [style.left.px]="area.x1"
-                                 [style.right.px]="420 - area.x2"
-                                 [style.bottom.px]="image.height - area.y2"
+                            <div class="image-search-creator__circle" *ngIf="'circle' === area.shape"
+                                 [style.top.px]="area.y1 - area.radius"
+                                 [style.left.px]="area.x1 - area.radius"
+                                 [style.padding.px]="area.radius"
                             ></div>
 						</ng-container>
 					</div>
                     <div *ngIf="question.imageSearch && question.imageSearch.areaData.length > 0">
                         <strong>Definierte Suchbereiche</strong>
-                        <div class="w-100 btn btn-info" *ngFor="let area of question.imageSearch.areaData; let i = index">
+                        <div class="w-100 mt-2 btn btn-info" *ngFor="let area of question.imageSearch.areaData; let i = index">
                             <span class="left">
                                 ({{area.x1}}/{{area.y1}})
-                                <ng-container *ngIf="'rect' === selectedAreaShapeOption.key">
+                                <ng-container *ngIf="'rect' === area.shape">
                                     ({{area.x2}}/{{area.y2}})
                                 </ng-container>
-                                <ng-container *ngIf="'circle' === selectedAreaShapeOption.key">
+                                <ng-container *ngIf="'circle' === area.shape">
                                     R: {{area.radius}}
                                 </ng-container>
                             </span>
-                            <input type="text" class="ml-2 w-50" [(ngModel)]="area.description" [placeholder]="'Beschreibung für den Suchbegriff...'">
                             <button class="btn btn-secondary right pl-1 pr-1 pt-0 pb-0" (click)="deleteArea(i)">X</button>
+                            <input type="text" class="mr-2 right ml-2 w-60" [(ngModel)]="area.description" [placeholder]="'Beschreibung für den Suchbegriff...'">
                         </div>
                     </div>
 

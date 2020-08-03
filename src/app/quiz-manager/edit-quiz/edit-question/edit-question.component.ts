@@ -89,12 +89,10 @@ export class EditQuestionComponent implements OnInit {
     public validateQuestionAndSubmit() {
         this.errorsWithQuestion = [];
         if (!this.questionIsValid()) {
+            console.log('ERROR');
             if (!(this.question.title
                 && this.question.title.trim() !== '')) {
                 this.errorsWithQuestion.push(QuestionError.TITLE_INVALID);
-            }
-            if (this.question.options.findIndex(o => o.text.trim() === '') !== -1) {
-                this.errorsWithQuestion.push(QuestionError.ANSWER_OPTION_INVALID);
             }
             if (this.question.rightAnswerScreenTime < 0) {
                 this.errorsWithQuestion.push(QuestionError.RIGHT_ANSWER_SCREEN_TIME_INVALID);
@@ -102,8 +100,21 @@ export class EditQuestionComponent implements OnInit {
             if (this.question.wrongAnswerPenalty < 3) {
                 this.errorsWithQuestion.push(QuestionError.WRONG_ANSWER_SCREEN_TIME_INVALID);
             }
-            if ((this.isCheckbox() || this.isRadio()) && this.question.options.findIndex(o => o.correct) === -1) {
-                this.errorsWithQuestion.push(QuestionError.NO_CORRECT_ANSWER);
+            switch (this.question.type) {
+                case QuestionType.CHECKBOX:
+                case QuestionType.RADIO:
+                    if (this.question.options.findIndex(o => o.correct) === -1) {
+                        this.errorsWithQuestion.push(QuestionError.NO_CORRECT_ANSWER);
+                    }
+                    if (this.question.options.findIndex(o => o.text.trim() === '') !== -1) {
+                        this.errorsWithQuestion.push(QuestionError.ANSWER_OPTION_INVALID);
+                    }
+                    break;
+                case QuestionType.IMAGE_SEARCH:
+                    if (this.question.imageSearch?.areaData?.length === 0) {
+                        this.errorsWithQuestion.push(QuestionError.IMAGE_SEARCH_AREAS_MISSING);
+                    }
+                    break;
             }
             return;
         }
@@ -122,6 +133,8 @@ export class EditQuestionComponent implements OnInit {
                 return 'eine Strafzeit von mindestens 3 Sekunden angegeben ist';
             case QuestionError.NO_CORRECT_ANSWER:
                 return 'mindestens eine Antwort die richtige ist';
+            case QuestionError.IMAGE_SEARCH_AREAS_MISSING:
+                return 'mindestens ein Zielbereich muss definiert sein';
         }
     }
 
@@ -136,15 +149,21 @@ export class EditQuestionComponent implements OnInit {
     }
 
     public clickedCoords(event: any) {
-        console.log(event);
         const areaData = new AreaData();
         areaData.description = '';
         areaData.shape = this.selectedAreaShapeOption.key as 'rect' | 'circle';
-        areaData.x1 = event.offsetX - 20;
-        areaData.y1 = event.offsetY - 20;
-        areaData.x2 = event.offsetX + 20;
-        areaData.y2 = event.offsetY + 20;
-        areaData.radius = 15;
+        if (areaData.shape === 'circle') {
+            areaData.radius = this.tempAreaData && this.tempAreaData.radius > 0 ? this.tempAreaData.radius : 20;
+            areaData.x1 = event.offsetX;
+            areaData.y1 = event.offsetY;
+        } else {
+            areaData.x1 = event.offsetX - 20;
+            areaData.y1 = event.offsetY - 20;
+            areaData.x2 = event.offsetX + 20;
+            areaData.y2 = event.offsetY + 20;
+            areaData.radius = this.tempAreaData && this.tempAreaData.radius > 0 ? this.tempAreaData.radius : 20;
+        }
+
         this.tempAreaData = areaData;
     }
 
@@ -170,11 +189,21 @@ export class EditQuestionComponent implements OnInit {
     }
 
     private questionIsValid() {
-        return this.question.title
-                && this.question.title.trim() !== ''
-                && this.question.options.findIndex(o => o.text.trim() === '') === -1
-                && this.question.rightAnswerScreenTime >= 0
-                && this.question.wrongAnswerPenalty >= 3
-                && !((this.isCheckbox() || this.isRadio()) && this.question.options.findIndex(o => o.correct) === -1);
+        const isCoreDataValid = this.question.title
+                        && this.question.title.trim() !== ''
+                        && this.question.rightAnswerScreenTime >= 0
+                        && this.question.wrongAnswerPenalty >= 3;
+        switch (this.question.type) {
+            case QuestionType.IMAGE_SEARCH:
+                return this.question.imageSearch
+                        && this.question.imageSearch.areaData
+                        && this.question.imageSearch.areaData.length > 0;
+            case QuestionType.RADIO:
+            case QuestionType.CHECKBOX:
+                return isCoreDataValid
+                        && this.question.options.findIndex(o => o.text.trim() === '') === -1
+                        && this.question.options.findIndex(o => o.correct) > -1;
+        }
+        return isCoreDataValid;
     }
 }

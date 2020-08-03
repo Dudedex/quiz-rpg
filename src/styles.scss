@@ -44,6 +44,10 @@
   }
 }
 
+.border-red {
+  border-color: red;
+}
+
 .image-search-creator-container {
   position: relative;
   max-width: 420px;
@@ -79,7 +83,7 @@ img[usemap] {
   border: none;
   height: auto;
   max-width: 100%;
-  width: auto;
+  width: 420px;
   cursor: pointer;
 }
 

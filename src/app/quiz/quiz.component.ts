@@ -161,7 +161,6 @@ export class QuizComponent implements OnInit {
             this.statSubscription = interval(1000).subscribe(() => {
                 this.apiClient.loadStats(this.lobby).subscribe((res: any) => {
                     this.endGameStats = res;
-                    console.log(this.endGameStats);
                 });
             });
         });
