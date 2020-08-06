@@ -39,114 +39,20 @@
 		</div>
 		<div class="w-48">
 			<div *ngIf="isRadio() || isCheckbox()">
-				<h5>Antworten</h5>
-				<ngb-alert [type]="'warning'" *ngIf="isCheckbox()" [dismissible]="false">
-					<div class="text-center">Alle richtigen Antworten müssen vom Spieler angehakt werden damit die Frage
-						richtig beantwortet ist
-					</div>
-				</ngb-alert>
-				<ngb-alert [type]="'warning'" *ngIf="isRadio()" [dismissible]="false">
-					<div class="text-center">Eine richtige Antwort muss vom Spieler angeklickt werden damit die Frage
-						richtig beantwortet ist
-					</div>
-				</ngb-alert>
-				<div class="content" *ngFor="let option of question.options; index as i">
-					<label class="btn btn-info w-100 text-left" for="question_{{i}}">
-						<input type="checkbox" id="question_{{i}}" [(ngModel)]="option.correct">
-						<input class="w-90 ml-2" type="text" [(ngModel)]="option.text" [placeholder]="'Antwort...'">
-						<button class="btn btn-secondary right pl-1 pr-1 pt-0 pb-0" (click)="deleteAnswerOption(i)">X</button>
-					</label>
-					<input class="ml-5 w-90 mb-2" type="text" *ngIf="!option.correct" [(ngModel)]="option.wrongAnswerHint"
-						   [placeholder]="'Falsche Antwort => Hinweis für Spieler...'">
-				</div>
-				<button class="btn btn-primary w-100" (click)="addQuestionAnswerOption()">Neue Antwortoption hinzufügen</button>
+                <app-radio-and-checkbox-editor
+                    [question]="question">
+                </app-radio-and-checkbox-editor>
 			</div>
 			<div *ngIf="isImageSearch()">
-				<h5>Wimmelbild</h5>
-				<div>
-					<input type="file" accept="image/*" (change)="imageChangeListener($event)">
-				</div>
-				<ng-container *ngIf="question.imageSearch.imageData">
-                    <div>
-                        <strong>Bereichsform</strong>
-                        <div ngbDropdown class="w-100" *ngIf="areaShapeOptions">
-                            <button class="btn btn-outline-secondary w-100" ngbDropdownToggle>{{selectedAreaShapeOption.displayValue}}</button>
-                            <div ngbDropdownMenu aria-labelledby="Fragentyp">
-                                <button ngbDropdownItem *ngFor="let areaShapeOption of areaShapeOptions"
-                                        (click)="selectedAreaShapeOption = areaShapeOption">
-                                    {{areaShapeOption.displayValue}}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div *ngIf="tempAreaData">
-                        <strong>Koordinaten</strong>
-                        <div>
-                            (x1/y1) (<input type="number" [(ngModel)]="tempAreaData.x1">/<input type="number" [(ngModel)]="tempAreaData.y1">)
-                        </div>
-                        <ng-container *ngIf="'rect' === selectedAreaShapeOption.key">
-                            (x2/y2) (<input type="number" [(ngModel)]="tempAreaData.x2">/<input type="number" [(ngModel)]="tempAreaData.y2">)
-                        </ng-container>
-                        <ng-container *ngIf="'circle' === selectedAreaShapeOption.key">
-                            Radius (<input type="number" [min]="10" [(ngModel)]="tempAreaData.radius">)
-                        </ng-container>
-                        <button class="btn btn-primary w-100 mt-2" (click)="addArea()">Bereich hinzufügen</button>
-                    </div>
-
-					<div class="mt-2 image-search-creator-container">
-                        <img [src]="question.imageSearch.imageData"
-                             width="420px"
-                             (click)="clickedCoords($event)"
-                             #image>
-                        <ng-container *ngIf="tempAreaData">
-                            <div class="image-search-creator__rect border-red" *ngIf="'rect' === selectedAreaShapeOption.key"
-                                 [style.top.px]="tempAreaData.y1"
-                                 [style.left.px]="tempAreaData.x1"
-                                 [style.right.px]="420 - tempAreaData.x2"
-                                 [style.bottom.px]="image.height - tempAreaData.y2"
-                            ></div>
-                            <div class="image-search-creator__circle border-red" *ngIf="'circle' === selectedAreaShapeOption.key"
-                                 [style.top.px]="tempAreaData.y1"
-                                 [style.left.px]="tempAreaData.x1"
-                                 [style.margin-top.px]="-tempAreaData.radius"
-                                 [style.margin-left.px]="-tempAreaData.radius"
-                                 [style.padding.px]="tempAreaData.radius"
-                            ></div>
-                        </ng-container>
-						<ng-container *ngFor="let area of question.imageSearch.areaData; let i = index">
-							<div class="image-search-creator__rect" *ngIf="'rect' === area.shape"
-								 [style.top.px]="area.y1"
-								 [style.left.px]="area.x1"
-								 [style.right.px]="420 - area.x2"
-								 [style.bottom.px]="image.height - area.y2"
-							></div>
-                            <div class="image-search-creator__circle" *ngIf="'circle' === area.shape"
-                                 [style.top.px]="area.y1 - area.radius"
-                                 [style.left.px]="area.x1 - area.radius"
-                                 [style.padding.px]="area.radius"
-                            ></div>
-						</ng-container>
-					</div>
-                    <div *ngIf="question.imageSearch && question.imageSearch.areaData.length > 0">
-                        <strong>Definierte Suchbereiche</strong>
-                        <div class="w-100 mt-2 btn btn-info" *ngFor="let area of question.imageSearch.areaData; let i = index">
-                            <span class="left">
-                                ({{area.x1}}/{{area.y1}})
-                                <ng-container *ngIf="'rect' === area.shape">
-                                    ({{area.x2}}/{{area.y2}})
-                                </ng-container>
-                                <ng-container *ngIf="'circle' === area.shape">
-                                    R: {{area.radius}}
-                                </ng-container>
-                            </span>
-                            <button class="btn btn-secondary right pl-1 pr-1 pt-0 pb-0" (click)="deleteArea(i)">X</button>
-                            <input type="text" class="mr-2 right ml-2 w-60" [(ngModel)]="area.description" [placeholder]="'Beschreibung für den Suchbegriff...'">
-                        </div>
-                    </div>
-
-				</ng-container>
-
+                <app-image-search-editor
+                    [question]="question">
+                </app-image-search-editor>
 			</div>
+            <div *ngIf="isDragAndDrop()">
+                <app-drag-and-drop-editor
+                        [question]="question">
+                </app-drag-and-drop-editor>
+            </div>
 		</div>
 		<hr class="clearfix">
 		<div class="w-100">

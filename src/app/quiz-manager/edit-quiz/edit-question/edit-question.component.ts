@@ -23,11 +23,9 @@ export class EditQuestionComponent implements OnInit {
     public questionAdded = new EventEmitter<Question>();
 
     public questionTypeOptions: QuestionTypeOption[];
-    public areaShapeOptions: DropdownOption[];
     public selectedQuestionTypeOption: QuestionTypeOption;
-    public selectedAreaShapeOption: DropdownOption;
     public errorsWithQuestion: QuestionError[] = [];
-    public tempAreaData = new AreaData();
+
 
     constructor() {
     }
@@ -46,16 +44,10 @@ export class EditQuestionComponent implements OnInit {
             key: QuestionType.IMAGE_SEARCH,
             displayValue: 'Wimmelbild'
         });
-        this.areaShapeOptions = [];
-        this.areaShapeOptions.push({
-            key: 'rect',
-            displayValue: 'Rechteckig'
+        this.questionTypeOptions.push({
+            key: QuestionType.DRAG_AND_DROP,
+            displayValue: 'Reihenfolge bestimmen'
         });
-        this.areaShapeOptions.push({
-            key: 'circle',
-            displayValue: 'Rund'
-        });
-        this.selectedAreaShapeOption = this.areaShapeOptions[0];
         if (this.question) {
             this.selectQuestionType(this.questionTypeOptions.find(to => to.key === this.question.type));
         }
@@ -78,12 +70,8 @@ export class EditQuestionComponent implements OnInit {
         return this.question.type === QuestionType.IMAGE_SEARCH;
     }
 
-    public addQuestionAnswerOption() {
-        this.question.options.push(QuizManagerHelper.getDummyAnswer());
-    }
-
-    public deleteAnswerOption(index: number) {
-        this.question.options.splice(index, 1);
+    public isDragAndDrop() {
+        return this.question.type === QuestionType.DRAG_AND_DROP;
     }
 
     public validateQuestionAndSubmit() {
@@ -101,8 +89,19 @@ export class EditQuestionComponent implements OnInit {
                 this.errorsWithQuestion.push(QuestionError.WRONG_ANSWER_SCREEN_TIME_INVALID);
             }
             switch (this.question.type) {
+                case QuestionType.DRAG_AND_DROP:
+                    if (this.question.options.length <= 1) {
+                        this.errorsWithQuestion.push(QuestionError.NOT_ENOUGH_ANSWER_OPTIONS);
+                    }
+                    if (this.question.options.findIndex(o => o.text.trim() === '') !== -1) {
+                        this.errorsWithQuestion.push(QuestionError.ANSWER_OPTION_INVALID);
+                    }
+                    break;
                 case QuestionType.CHECKBOX:
                 case QuestionType.RADIO:
+                    if (this.question.options.length <= 1) {
+                        this.errorsWithQuestion.push(QuestionError.NOT_ENOUGH_ANSWER_OPTIONS);
+                    }
                     if (this.question.options.findIndex(o => o.correct) === -1) {
                         this.errorsWithQuestion.push(QuestionError.NO_CORRECT_ANSWER);
                     }
@@ -115,6 +114,7 @@ export class EditQuestionComponent implements OnInit {
                         this.errorsWithQuestion.push(QuestionError.IMAGE_SEARCH_AREAS_MISSING);
                     }
                     break;
+
             }
             return;
         }
@@ -125,6 +125,8 @@ export class EditQuestionComponent implements OnInit {
         switch (error) {
             case QuestionError.TITLE_INVALID:
                 return 'die Frage einen Text besitzt';
+            case QuestionError.NOT_ENOUGH_ANSWER_OPTIONS:
+                return 'nicht genügend Antwortmöglichkeiten definiert (min 2)';
             case QuestionError.ANSWER_OPTION_INVALID:
                 return 'jede Antwortmöglichkeit hat einen Text';
             case QuestionError.RIGHT_ANSWER_SCREEN_TIME_INVALID:
@@ -136,56 +138,6 @@ export class EditQuestionComponent implements OnInit {
             case QuestionError.IMAGE_SEARCH_AREAS_MISSING:
                 return 'mindestens ein Zielbereich muss definiert sein';
         }
-    }
-
-    public imageChangeListener($event): void {
-        const file: File = $event.target.files[0];
-        const myReader: FileReader = new FileReader();
-
-        myReader.onloadend = (e) => {
-            this.question.imageSearch.imageData = myReader.result as string;
-        }
-        myReader.readAsDataURL(file);
-    }
-
-    public clickedCoords(event: any) {
-        const areaData = new AreaData();
-        areaData.description = '';
-        areaData.shape = this.selectedAreaShapeOption.key as 'rect' | 'circle';
-        if (areaData.shape === 'circle') {
-            areaData.radius = this.tempAreaData && this.tempAreaData.radius > 0 ? this.tempAreaData.radius : 20;
-            areaData.x1 = event.offsetX;
-            areaData.y1 = event.offsetY;
-        } else {
-            areaData.x1 = event.offsetX - 20;
-            areaData.y1 = event.offsetY - 20;
-            areaData.x2 = event.offsetX + 20;
-            areaData.y2 = event.offsetY + 20;
-            areaData.radius = this.tempAreaData && this.tempAreaData.radius > 0 ? this.tempAreaData.radius : 20;
-        }
-
-        this.tempAreaData = areaData;
-    }
-
-    public addArea() {
-        this.question.imageSearch.areaData.push(this.tempAreaData);
-        this.tempAreaData = undefined;
-    }
-
-    public deleteArea(index: number) {
-        this.question.imageSearch.areaData.splice(index, 1);
-    }
-
-    public getCordsForArea(area: AreaData) {
-        // 420 container max-width
-        switch (area.shape) {
-        case 'circle':
-            return area.x1 + ',' + area.y1 + ',' + area.radius;
-        case 'rect':
-            return area.x1 + ',' + area.y1 + ',' + area.x2 + ',' + area.y2;
-        }
-        console.error('Shape ' +  area.shape + ' has no handler yet');
-        return '';
     }
 
     private questionIsValid() {

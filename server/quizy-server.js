@@ -5,9 +5,10 @@ const {v4: uuidv4} = require('uuid');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const TYPE_CHECKBOX = 0;
-const TYPE_RADIO = 1;
-const TYPE_IMAGESEARCH = 2;
+const TYPE_CHECKBOX = 'CHECKBOX';
+const TYPE_RADIO = 'RADIO';
+const TYPE_IMAGESEARCH = 'IMAGE_SEARCH';
+const TYPE_DRAG_AND_DROP = 'DRAG_AND_DROP';
 
 var app = express();
 var port = 3000;
@@ -120,6 +121,9 @@ app.post('/:gameId/checkAnswer', function (req, res) {
     }
     if (question.type === TYPE_IMAGESEARCH) {
         checkImageSearchQuestion(question, gameId, userToken, res);
+    }
+    if (question.type === TYPE_DRAG_AND_DROP) {
+        checkDragAndDrop(question, gameId, answerIds, userToken, res);
     }
     res.status(400).send();
 });
@@ -312,7 +316,7 @@ function addOrClearGame(gameId, quizFileName, isClear) {
         questionIdToQuestionMap[gameId][q.uuid] = q;
         q.options.forEach((o) => {
             o.uuid = uuidv4();
-            if (o.correct) {
+            if (o.correct || q.type === TYPE_DRAG_AND_DROP) {
                 rightAnswers[gameId][q.uuid].push(o.uuid);
             }
             delete o.correct;
@@ -351,6 +355,22 @@ function checkCheckboxQuestion(question, gameId, answerIds, userToken, res) {
         correct: true
     });
     return;
+}
+
+function checkDragAndDrop(question, gameId, answerIds, userToken, res) {
+    for (var i = 0; i < question.options.length; i++) {
+        if (rightAnswers[gameId][question.uuid][i] !== answerIds[i]) {
+            trackProgress(gameId, userToken, question, false);
+            res.send({
+                correct: false
+            });
+            return;
+        }
+    }
+    trackProgress(gameId, userToken, question, true);
+    res.send({
+        correct: true
+    });
 }
 
 function checkImageSearchQuestion(question, gameId, userToken, res) {

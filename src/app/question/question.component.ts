@@ -11,8 +11,6 @@ import {ApiClientService} from '../api-client.service';
 })
 export class QuestionComponent implements OnInit, OnChanges {
 
-    static IMAGE_SEARCH_SKIP_TIME = 30;
-
     @ViewChild('image') public image: ElementRef;
 
     @Input()
@@ -27,13 +25,10 @@ export class QuestionComponent implements OnInit, OnChanges {
     @Output()
     public questionCorrect = new EventEmitter<void>();
 
-    public IMAGE_CONTAINER_MAX_WIDTH = 420;
     public errorPenalty: boolean;
     public wrongAnswerPenaltySeconds: number;
     public rightAnswerSequelSeconds: number;
     public questionedOpened: number;
-    public skippingImageSearchPossible: boolean;
-    public timeRemainingForSkip: number;
     private submitted: boolean;
     public showRightAnswersHint: boolean;
     public wrongAnswerSpecial: string;
@@ -50,15 +45,7 @@ export class QuestionComponent implements OnInit, OnChanges {
         this.wrongAnswerPenaltySeconds = undefined;
         this.submitted = false;
         this.wrongAnswerSpecial = undefined;
-        this.timeRemainingForSkip = undefined;
         this.questionedOpened = Date.now();
-        if (this.question.type === QuestionType.IMAGE_SEARCH) {
-            this.skippingImageSearchPossible = false;
-            this.calcTimeRemainingForSkip(QuestionComponent.IMAGE_SEARCH_SKIP_TIME);
-            setTimeout(() => {
-                this.skippingImageSearchPossible = true;
-            }, QuestionComponent.IMAGE_SEARCH_SKIP_TIME * 1000);
-        }
     }
 
     public checkRadioOption(selectedAnswer: AnswerOption) {
@@ -103,49 +90,27 @@ export class QuestionComponent implements OnInit, OnChanges {
         return this.question.type === QuestionType.IMAGE_SEARCH;
     }
 
-    public areaClicked(area: AreaData) {
-        area.checked = true;
-        if (this.question.imageSearch.areaData.findIndex(ad => !ad.checked) === -1) {
-            this.apiClient.checkAnswer(this.lobby, this.userToken, this.question.uuid, []).subscribe((res: any) => {
-                // no chance to fail
-                this.questionAnsweredCorrectly();
-            });
+    public isDragAndDrop() {
+        return this.question.type === QuestionType.DRAG_AND_DROP;
+    }
+
+    public questionAnsweredCorrectly() {
+        if (!this.submitted) {
+            this.submitted = true;
+            if (this.question.rigthAnswerSequel) {
+                this.showRightAnswersHint = true;
+                this.countSuccessSequelTime(this.question.rightAnswerScreenTime);
+                setTimeout(() => {
+                    this.showRightAnswersHint = false;
+                    this.questionCorrect.emit();
+                }, this.question.rightAnswerScreenTime * 1000);
+            } else {
+                this.questionCorrect.emit();
+            }
         }
     }
 
-    public getCordsForArea(area: AreaData) {
-        // 420 container max-width
-        let ratio = 1;
-        if (this.image && this.image.nativeElement && this.image.nativeElement.width !== 0) {
-            ratio = this.image.nativeElement.width / this.IMAGE_CONTAINER_MAX_WIDTH;
-        }
-        switch (area.shape) {
-            case 'circle':
-                return area.x1 * ratio + ',' + area.y1 * ratio + ',' + area.radius * ratio;
-            case 'rect':
-                return area.x1 * ratio + ',' + area.y1 * ratio + ',' + area.x2 * ratio + ',' + area.y2 * ratio;
-        }
-        console.error('Shape ' +  area.shape + ' has no handler yet');
-        return '';
-    }
-
-    public skipImageSerch() {
-        if (!this.skippingImageSearchPossible) {
-            return;
-        }
-        this.questionAnsweredCorrectly();
-    }
-
-    private calcTimeRemainingForSkip(time: number) {
-        this.timeRemainingForSkip = time;
-        if (this.timeRemainingForSkip > 0) {
-            setTimeout(() => {
-                this.calcTimeRemainingForSkip(time - 1);
-            }, 1000);
-        }
-    }
-
-    private startErrorTimer() {
+    public startErrorTimer() {
         if (this.errorPenalty) {
             return;
         }
@@ -175,22 +140,4 @@ export class QuestionComponent implements OnInit, OnChanges {
             this.countSuccessSequelTime(timeInSeconds - 1);
         }, 1000);
     }
-
-    private questionAnsweredCorrectly() {
-        if (!this.submitted) {
-            this.submitted = true;
-            if (this.question.rigthAnswerSequel) {
-              this.showRightAnswersHint = true;
-              this.countSuccessSequelTime(this.question.rightAnswerScreenTime);
-              setTimeout(() => {
-                this.showRightAnswersHint = false;
-                this.questionCorrect.emit();
-              }, this.question.rightAnswerScreenTime * 1000);
-            } else {
-              this.questionCorrect.emit();
-            }
-        }
-    }
-
-
 }

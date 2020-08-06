@@ -1,5 +1,6 @@
 export enum QuestionType {
-  CHECKBOX,
-  RADIO,
-  IMAGE_SEARCH
+    CHECKBOX = 'CHECKBOX',
+    RADIO = 'RADIO',
+    IMAGE_SEARCH = 'IMAGE_SEARCH',
+    DRAG_AND_DROP = 'DRAG_AND_DROP'
 }

@@ -1,0 +1,24 @@
+<div *ngFor="let area of question.imageSearch.areaData">
+    - {{area.description}} {{area.checked ? '(gefunden)': ''}}
+</div>
+<img
+    #image
+    [width]="IMAGE_CONTAINER_MAX_WIDTH"
+    [src]="question.imageSearch.imageData"
+    [alt]="'picture'"
+    usemap="#areaMap">
+
+<map id="map_id" name="areaMap">
+    <ng-container *ngFor="let area of question.imageSearch.areaData; let i = index">
+        <area [alt]="'area_' + i"
+              [shape]="area.shape"
+              [coords]="getCordsForArea(area)"
+              (click)="areaClicked(area)"
+              href="#">
+    </ng-container>
+</map>
+<button class="btn btn-secondary mt-2 w-100"
+        [disabled]="!skippingImageSearchPossible"
+        (click)="skipImageSerch()">
+    Frage überspringen {{timeRemainingForSkip > 0 ? '(' + timeRemainingForSkip + ')': ''}}
+</button>

@@ -1,10 +1,23 @@
 <div class="question-container" *ngIf="question">
 	<h5><span [innerHtml]="question.title"></span></h5>
-	<ng-container *ngIf="isImageSearch()">
-		<div *ngFor="let area of question.imageSearch.areaData">
-			- {{area.description}} {{area.checked ? '(gefunden)': ''}}
-		</div>
-	</ng-container>
+    <ng-container *ngIf="isImageSearch()">
+        <app-image-search-question
+                [lobby]="lobby"
+                [userToken]="userToken"
+                [question]="question"
+                (questionAnsweredCorrectly)="questionAnsweredCorrectly()">
+        </app-image-search-question>
+    </ng-container>
+    <ng-container *ngIf="isDragAndDrop()">
+        <app-drag-and-drop
+                [lobby]="lobby"
+                [userToken]="userToken"
+                [errorPenalty]="errorPenalty"
+                [question]="question"
+                (questionAnsweredCorrectly)="questionAnsweredCorrectly()"
+                (questionAnsweredFalse)="startErrorTimer()">
+        </app-drag-and-drop>
+    </ng-container>
 	<div class="content" *ngFor="let option of question.options; index as i">
 		<ng-container *ngIf="isCheckboxType()">
 			<label class="btn btn-info w-100 text-left" for="question_{{i}}">
@@ -18,29 +31,6 @@
 			</button>
 		</ng-container>
 	</div>
-	<ng-container *ngIf="isImageSearch()">
-        <img
-            #image
-            [width]="IMAGE_CONTAINER_MAX_WIDTH"
-            [src]="question.imageSearch.imageData"
-            [alt]="'picture'"
-            usemap="#areaMap">
-
-		<map id="map_id" name="areaMap">
-			<ng-container *ngFor="let area of question.imageSearch.areaData; let i = index">
-				<area [alt]="'area_' + i"
-					  [shape]="area.shape"
-					  [coords]="getCordsForArea(area)"
-					  (click)="areaClicked(area)"
-                      href="#">
-			</ng-container>
-		</map>
-		<button class="btn btn-secondary mt-2 w-100"
-				[disabled]="!skippingImageSearchPossible"
-				(click)="skipImageSerch()">
-			Frage überspringen {{timeRemainingForSkip > 0 ? '(' + timeRemainingForSkip + ')': ''}}
-		</button>
-	</ng-container>
 	<button class="btn btn-primary w-100" [disabled]="errorPenalty" *ngIf="isCheckboxType()" (click)="checkAnswer()">
 		Antwort abgeben
 	</button>
@@ -65,6 +55,8 @@
         <div class="mt-3">
             Es geht in  <strong>{{rightAnswerSequelSeconds}}</strong> {{rightAnswerSequelSeconds === 1 ? 'Sekunde': 'Sekunden'}} weiter!
         </div>
-		<span [innerHTML]="question.rigthAnswerSequel"></span>
+        <div class="mt-3" *ngIf="question.rigthAnswerSequel">
+            <span [innerHTML]="question.rigthAnswerSequel"></span>
+        </div>
 	</ngb-alert>
 </div>
