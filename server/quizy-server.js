@@ -45,7 +45,7 @@ if (!options) {
     https.createServer(options, app).listen(port);
 }
 
-app.get('/:gameId', function (req, res) {
+app.get('/:gameId', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     if (games[gameId] === undefined) {
         res.status(400).send();
@@ -69,7 +69,7 @@ app.get('/:gameId', function (req, res) {
 
 });
 
-app.post('/:gameId/registerPlayer', function (req, res) {
+app.post('/:gameId/registerPlayer', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     const username = req.body.username;
     if (gameId === undefined
@@ -94,7 +94,7 @@ app.post('/:gameId/registerPlayer', function (req, res) {
     });
 });
 
-app.post('/:gameId/checkAnswer', function (req, res) {
+app.post('/:gameId/checkAnswer', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     const questionId = req.body.questionId;
     const userToken = req.body.userToken;
@@ -129,7 +129,7 @@ app.post('/:gameId/checkAnswer', function (req, res) {
     res.status(400).send();
 });
 
-app.post('/:gameId/finished', function (req, res) {
+app.post('/:gameId/finished', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     const userToken = req.body.userToken;
     if (gameId === undefined
@@ -150,7 +150,7 @@ app.post('/:gameId/finished', function (req, res) {
     res.send();
 });
 
-app.post('/:gameId/endGameStats', function (req, res) {
+app.post('/:gameId/endGameStats', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined) {
@@ -163,7 +163,7 @@ app.post('/:gameId/endGameStats', function (req, res) {
     });
 });
 
-app.post('/:gameId/admin/startGame', function (req, res) {
+app.post('/:gameId/admin/startGame', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined
@@ -179,7 +179,7 @@ app.post('/:gameId/admin/startGame', function (req, res) {
     res.send();
 });
 
-app.post('/:gameId/admin/registerGame', function (req, res) {
+app.post('/:gameId/admin/registerGame', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     const fileName = req.body.quizFileName;
     if (gameId === undefined
@@ -200,7 +200,7 @@ app.post('/:gameId/admin/registerGame', function (req, res) {
     res.send();
 });
 
-app.post('/:gameId/admin/deleteGame', function (req, res) {
+app.post('/:gameId/admin/deleteGame', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || gameId.length < 3
@@ -219,7 +219,7 @@ app.post('/:gameId/admin/deleteGame', function (req, res) {
 });
 
 
-app.post('/:gameId/admin/clearGame', function (req, res) {
+app.post('/:gameId/admin/clearGame', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     if (gameId === undefined
         || games[gameId] === undefined) {
@@ -233,7 +233,7 @@ app.post('/:gameId/admin/clearGame', function (req, res) {
     res.sendStatus(204);
 });
 
-app.get('/admin/games', function (req, res) {
+app.get('/admin/games', bodyParser.json(), function (req, res) {
     if (!validateAdmin(req, res)) {
         return;
     }
