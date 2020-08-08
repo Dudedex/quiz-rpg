@@ -26,5 +26,4 @@ export class QuizManagerComponent implements OnInit {
         this.showQuizCreatedHint = true;
         this.tempQuiz = undefined;
     }
-
 }

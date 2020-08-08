@@ -19,6 +19,7 @@ import { DragAndDropEditorComponent } from './quiz-manager/edit-quiz/drag-and-dr
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { ImageSearchQuestionComponent } from './question/image-search-question/image-search-question.component';
 import { DragAndDropComponent } from './question/drag-and-drop/drag-and-drop.component';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 @NgModule({
     declarations: [
@@ -41,7 +42,8 @@ import { DragAndDropComponent } from './question/drag-and-drop/drag-and-drop.com
         HttpClientModule,
         NgbModule,
         AppRoutingModule,
-        DragDropModule
+        DragDropModule,
+        ClipboardModule
     ],
     providers: [ApiClientService],
     bootstrap: [AppComponent]

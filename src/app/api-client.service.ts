@@ -60,7 +60,7 @@ export class ApiClientService {
 
     public registerGame(token: string, gameName: string, gameFile: string) {
         const headers = new HttpHeaders().set('Authorization', token);
-        return this.httpClient.post(ApiClientService.BASE_PATH  + gameName + '/admin/registerGame',{
+        return this.httpClient.post(ApiClientService.BASE_PATH  + gameName + '/admin/registerGame', {
             quizFileName: gameFile
         }, {
             headers

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ApiClientService} from '../api-client.service';
 import {interval, Subscription} from 'rxjs';
 import {Game} from '../models/game';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
     selector: 'app-admin-console',
@@ -11,13 +12,13 @@ import {Game} from '../models/game';
 export class AdminConsoleComponent implements OnInit {
 
     public token: string;
-    public gameName: string;
+    public lobbyName: string;
     public gameFile: string;
     public gamesSubscription: Subscription;
     public games: Game[];
     public showedGames: string [] = [];
 
-    constructor(private apiClient: ApiClientService) { }
+    constructor(private apiClient: ApiClientService, private clipboard: Clipboard) { }
 
     ngOnInit(): void {
         this.gamesSubscription = interval(1500).subscribe(() => {
@@ -54,7 +55,7 @@ export class AdminConsoleComponent implements OnInit {
     }
 
     public registerGame() {
-        this.apiClient.registerGame(this.token, this.gameName, this.gameFile).subscribe(() => {});
+        this.apiClient.registerGame(this.token, this.lobbyName, this.gameFile).subscribe(() => {});
     }
 
     public deleteGame(gameName) {
@@ -62,6 +63,20 @@ export class AdminConsoleComponent implements OnInit {
     }
 
     public getRightQuestions(game: Game, playerName: string) {
+        if (!game.questionProgress || !game.questionProgress[playerName]) {
+            return;
+        }
         return game.questionProgress[playerName].filter(answer => answer.answeredCorrectly).length;
     }
+
+    public copyGameLink(name: string) {
+        this.clipboard.copy(this.getGameLink(name));
+    }
+
+    public getGameLink(name: string) {
+        const getUrl = window.location;
+        const baseUrl = getUrl .protocol + '//' + getUrl.host + '/';
+        return baseUrl + 'quiz/' + name;
+    }
+
 }

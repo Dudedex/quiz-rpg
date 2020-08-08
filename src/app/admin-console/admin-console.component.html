@@ -7,10 +7,12 @@
 	<input class="w-100" type="password" [(ngModel)]="token" [placeholder]="'token...'">
 	<div class="mt-2" *ngIf="games">
 		<h3>Spielname</h3>
-		<input class="w-100 mt-2" type="text" [(ngModel)]="gameName" [placeholder]="'Spielname...'">
-        <input class="w-100 mt-2" type="text" [(ngModel)]="gameFile" [placeholder]="'Lobbyname...'">
-		<button class="btn btn-primary"
-				*ngIf="gameName && gameName.trim() !== '' && gameName.trim().length > 2 && gameFile && gameFile.trim() !== ''"
+        <h5>Lobby</h5>
+		<input class="w-100 mb-1" type="text" [(ngModel)]="lobbyName" [placeholder]="'Lobbyname...'">
+        <h5>Datei</h5>
+        <input class="w-100 mb-1" type="text" [(ngModel)]="gameFile" [placeholder]="'Serverdateiname (ohne Endung)...'">
+		<button class="btn btn-primary w-100 mt-2"
+				*ngIf="lobbyName && lobbyName.trim() !== '' && lobbyName.trim().length > 2 && gameFile && gameFile.trim() !== ''"
 				(click)="registerGame()">Spiel anlegen</button>
 	</div>
 	<ng-container *ngIf="games && games.length > 0">
@@ -21,6 +23,11 @@
 				</a>
 				<h5>Spielname</h5>
 				{{game.name}}
+                <h5>Link</h5>
+                <span>
+                    {{getGameLink(game.name)}}
+                </span>
+                <button class="btn btn-small btn-primary w-100" (click)="copyGameLink(game.name)">Spiellink kopieren</button>
 				<div *ngIf="gameShown(game)">
 					<hr>
 					<h5>Spielstatus</h5>

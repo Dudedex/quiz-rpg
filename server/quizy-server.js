@@ -11,6 +11,7 @@ const TYPE_IMAGESEARCH = 'IMAGE_SEARCH';
 const TYPE_DRAG_AND_DROP = 'DRAG_AND_DROP';
 
 var app = express();
+app.use(bodyParser.json())
 var port = 3000;
 if (process.argv.length > 2) {
     port = parseInt(process.argv[2]);
@@ -22,7 +23,7 @@ var questionIdToQuestionMap = {};
 var rightAnswers = {};
 var userTokens = {};
 
-app.use(bodyParser.json());
+
 app.use(cors());
 var tokenFilePath = path.join(__dirname, '.token');
 var options = undefined;
@@ -253,7 +254,7 @@ app.get('/admin/games', function (req, res) {
     res.send(gameObject);
 });
 
-app.post('/admin/quiz/createOrUpdate', function (req, res) {
+app.post('/admin/quiz/createOrUpdate', bodyParser.json({limit: '50mb', parameterLimit:50000}), function (req, res) {
     if (!validateAdmin(req, res)) {
         return;
     }
