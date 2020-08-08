@@ -11,7 +11,6 @@ const TYPE_IMAGESEARCH = 'IMAGE_SEARCH';
 const TYPE_DRAG_AND_DROP = 'DRAG_AND_DROP';
 
 var app = express();
-app.use(bodyParser.json())
 var port = 3000;
 if (process.argv.length > 2) {
     port = parseInt(process.argv[2]);
