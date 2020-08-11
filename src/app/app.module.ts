@@ -20,6 +20,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import { ImageSearchQuestionComponent } from './question/image-search-question/image-search-question.component';
 import { DragAndDropComponent } from './question/drag-and-drop/drag-and-drop.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
+import { RunGameComponent } from './question/run-game/run-game.component';
 
 @NgModule({
     declarations: [
@@ -34,7 +35,8 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
         RadioAndCheckboxEditorComponent,
         DragAndDropEditorComponent,
         ImageSearchQuestionComponent,
-        DragAndDropComponent
+        DragAndDropComponent,
+        RunGameComponent
     ],
     imports: [
         BrowserModule,
