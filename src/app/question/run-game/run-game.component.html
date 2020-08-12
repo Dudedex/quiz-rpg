@@ -1,2 +1,5 @@
-<p>run-game works!</p>
-<img [src]="currentImage" *ngIf="currentImage" width="420" (click)="run()"/>
+<div style="position: relative" style="{{'background-image: url(' + background + ')'}};background-size: 420px 500px;background-position: -{{steps * 30}}px 0px; ">
+    <img [src]="currentImage" *ngIf="currentImage && !winningImage" width="420" height="460" (click)="run()"/>
+    <img [src]="winningImage" *ngIf="winningImage && !currentImage" width="420" height="460"/>
+</div>
+
