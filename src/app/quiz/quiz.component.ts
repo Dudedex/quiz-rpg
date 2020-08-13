@@ -7,6 +7,7 @@ import {interval, Subscription} from 'rxjs';
 import {GameStats} from '../models/game-stats';
 import {EndgameStats} from '../models/endgame-stats';
 import {ActivatedRoute} from '@angular/router';
+import {Question} from '../models/question';
 
 @Component({
     selector: 'app-quiz',
@@ -54,6 +55,10 @@ export class QuizComponent implements OnInit {
 
     ngOnInit() {
         this.activeQuestion = 0;
+    }
+
+    public getALPQuestion() {
+        return {requiredSteps: 100} as Question;
     }
 
     public isUsernameStep() {
@@ -184,7 +189,7 @@ export class QuizComponent implements OnInit {
         if (this.quizSteps[this.currentStep] === QuizStep.WAIT_FOR_START) {
             this.startSubscription = interval(500).subscribe(() => {
                 if (!this.blockCall) {
-                    this.apiClient.checkStartTime(this.lobby).subscribe((res: any) => {
+                    this.apiClient.checkStartTime(this.lobby, this.username).subscribe((res: any) => {
                         this.timeUntilStartInMs = res.timeUntilStartInMs as number;
                         this.players = res.players;
                         if (this.timeUntilStartInMs > 0) {

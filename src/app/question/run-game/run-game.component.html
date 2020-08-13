@@ -1,5 +1,36 @@
-<div style="position: relative" style="{{'background-image: url(' + background + ')'}};background-size: 420px 500px;background-position: -{{steps * 30}}px 0px; ">
-    <img [src]="currentImage" *ngIf="currentImage && !winningImage" width="420" height="460" (click)="run()"/>
-    <img [src]="winningImage" *ngIf="winningImage && !currentImage" width="420" height="460"/>
+<div class="question-container" style="{{'background-image: url(' + background + ')'}};background-size: 360px 400px;background-position: -{{steps * 30}}px 0px; ">
+	<img [src]="currentImage" *ngIf="currentImage && !winningImage" width="360" height="400"/>
+	<img [src]="winningImage" *ngIf="winningImage && !currentImage" width="360" height="400"/>
 </div>
+<button class="btn btn-primary mt-1 w-100 manipulation" *ngIf="this.currentImage && !this.showIntro" (click)="run()">LAUF</button>
+<div class="mt-2">
+	Distanz: {{steps}}m/{{stepsToFinish}}m
+</div>
+<ngb-alert class="overlay-hint" *ngIf="showIntro" [type]="'info'" [dismissible]="false">
+	<div class="text-center">
+		<h3>
+			Al Paco braucht dich!
+		</h3>
+		<div class="mt-3">
+			Al Paco hat es in das {{stepsToFinish}} Meter Finale geschafft... Jetzt braucht er DICH!
+		</div>
+		<div class="mt-3">
+			Tippe (so schnell es geht!) auf den Lauf Knopf um Al Paco anzutreiben!
+		</div>
+		<div class="mt-3" *ngIf="timeInSecondsTillStart <= 5">
+			<div>
+				<strong>Sei bereit!</strong>
+			</div>
+			<div>Es geht los in</div>
+			<div>
+				<h4>{{timeInSecondsTillStart}}</h4>
+			</div>
+		</div>
+	</div>
+</ngb-alert>
+<ngb-alert class="overlay-hint" *ngIf="showOutro" [type]="'success'" [dismissible]="false">
+	<h3 class="text-center">
+		!!! Al PACO GEWINNT !!!
+	</h3>
+</ngb-alert>
 

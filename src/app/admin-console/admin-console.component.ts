@@ -69,6 +69,13 @@ export class AdminConsoleComponent implements OnInit {
         return game.questionProgress[playerName].filter(answer => answer.answeredCorrectly).length;
     }
 
+    public getLastTickFromPlayer(game: Game, playerName: string) {
+        if (!game.lastTick || !game.lastTick[playerName]) {
+            return '-';
+        }
+        return (game.currentServerTime - game.lastTick[playerName]) + '';
+    }
+
     public copyGameLink(name: string) {
         this.clipboard.copy(this.getGameLink(name));
     }
@@ -76,7 +83,7 @@ export class AdminConsoleComponent implements OnInit {
     public getGameLink(name: string) {
         const getUrl = window.location;
         const baseUrl = getUrl .protocol + '//' + getUrl.host + '/';
-        return baseUrl + 'quiz/' + name;
+        return baseUrl + '/quiz-rpg/quiz/' + name;
     }
 
 }

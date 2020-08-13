@@ -12,7 +12,7 @@
     </ngb-alert>
     <input class="w-100 mb-2" type="text" [(ngModel)]="quiz.name" [disabled]="!quiz.isNew" [placeholder]="'Lobbyname...'">
     <h4>Fragen</h4>
-    <div class="w-100 p-1">
+    <div class="w-100 clearfix pt-1 pb-1">
         <div class="left btn btn-info ml-2 mb-2 w-48" *ngFor="let question of quiz.questions; let i = index">
             <span class="left">{{(i + 1) + '.'}}</span>
             <span class="ml-2">

@@ -9,6 +9,7 @@ const TYPE_CHECKBOX = 'CHECKBOX';
 const TYPE_RADIO = 'RADIO';
 const TYPE_IMAGESEARCH = 'IMAGE_SEARCH';
 const TYPE_DRAG_AND_DROP = 'DRAG_AND_DROP';
+const TYPE_AL_PACO_RACE = 'AL_PACO_RACE';
 
 var app = express();
 var port = 3000;
@@ -44,11 +45,15 @@ if (!options) {
     https.createServer(options, app).listen(port);
 }
 
-app.get('/:gameId', bodyParser.json(), function (req, res) {
+app.post('/:gameId', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     if (games[gameId] === undefined) {
         res.status(400).send();
         return;
+    }
+    const username = req.body.username;
+    if (username) {
+        games[gameId].lastTick[username] = Date.now();
     }
     var time = games[gameId].startTime;
     if (time < Date.now() - 5000) {
@@ -87,6 +92,7 @@ app.post('/:gameId/registerPlayer', bodyParser.json(), function (req, res) {
     games[gameId].players.push(username);
     const userToken = uuidv4();
     userTokens[userToken] = username;
+    games[gameId].lastTick[username] = [];
     res.send({
         quiz: games[gameId].quiz,
         userToken
@@ -106,7 +112,7 @@ app.post('/:gameId/checkAnswer', bodyParser.json(), function (req, res) {
         || questionIdToQuestionMap[gameId] === undefined
         || questionIdToQuestionMap[gameId][questionId] === undefined
         || !Array.isArray(answerIds)) {
-        console.log('precheck failed')
+        console.log('checkAnswer => precheck failed for game ' + gameId);
         console.log(userToken);
         console.log(userTokens[userToken]);
         res.status(400).send();
@@ -119,11 +125,14 @@ app.post('/:gameId/checkAnswer', bodyParser.json(), function (req, res) {
     if (question.type === TYPE_CHECKBOX) {
         checkCheckboxQuestion(question, gameId, answerIds, userToken, res);
     }
-    if (question.type === TYPE_IMAGESEARCH) {
-        checkImageSearchQuestion(question, gameId, userToken, res);
-    }
     if (question.type === TYPE_DRAG_AND_DROP) {
         checkDragAndDrop(question, gameId, answerIds, userToken, res);
+    }
+    if (question.type === TYPE_AL_PACO_RACE) {
+        checkNotFailableQuestion(question, gameId, userToken, res);
+    }
+    if (question.type === TYPE_IMAGESEARCH) {
+        checkNotFailableQuestion(question, gameId, userToken, res);
     }
     res.status(400).send();
 });
@@ -246,6 +255,8 @@ app.get('/admin/games', bodyParser.json(), function (req, res) {
                 players: game.players,
                 numOfQuestions: game.numOfQuestions,
                 questionProgress: game.questionProgress,
+                lastTick: game.lastTick,
+                currentServerTime: Date.now(),
                 gameStats: game.gameStats
             });
         }
@@ -305,6 +316,7 @@ function addOrClearGame(gameId, quizFileName, isClear) {
     games[gameId].startTime = 0;
     games[gameId].players = [];
     games[gameId].questionProgress = {};
+    games[gameId].lastTick = {};
     games[gameId].gameStats = [];
     games[gameId].gameFileName = quizFileName;
     games[gameId].quiz = JSON.parse(fs.readFileSync(path.join(__dirname, '/quizzes/' + quizFileName)));
@@ -373,7 +385,7 @@ function checkDragAndDrop(question, gameId, answerIds, userToken, res) {
     });
 }
 
-function checkImageSearchQuestion(question, gameId, userToken, res) {
+function checkNotFailableQuestion(question, gameId, userToken, res) {
     trackProgress(gameId, userToken, question, true);
     res.send({
         correct: true

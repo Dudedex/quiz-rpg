@@ -53,6 +53,12 @@
                         [question]="question">
                 </app-drag-and-drop-editor>
             </div>
+
+			<div *ngIf="isAlPacoRace()">
+				<app-al-paco-race
+						[question]="question">
+				</app-al-paco-race>
+			</div>
 		</div>
 		<hr class="clearfix">
 		<div class="w-100">

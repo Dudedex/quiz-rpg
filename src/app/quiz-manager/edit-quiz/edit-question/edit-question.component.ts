@@ -2,11 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Question} from '../../../models/question';
 import {QuestionType} from '../../../models/question-type';
 import {QuestionTypeOption} from '../../../models/question-type-option';
-import {QuizManagerHelper} from '../../utility/quiz-manager-helper';
 import {QuestionError} from '../../../models/question-error';
-import {ImageSearch} from '../../../models/image-search';
-import {AreaData} from '../../../models/area-data';
-import {DropdownOption} from '../../../models/dropdown-option';
 
 @Component({
     selector: 'app-edit-question',
@@ -48,6 +44,10 @@ export class EditQuestionComponent implements OnInit {
             key: QuestionType.DRAG_AND_DROP,
             displayValue: 'Reihenfolge bestimmen'
         });
+        this.questionTypeOptions.push({
+            key: QuestionType.AL_PACO_RACE,
+            displayValue: 'Al-Paco Rennen'
+        });
         if (this.question) {
             this.selectQuestionType(this.questionTypeOptions.find(to => to.key === this.question.type));
         }
@@ -72,6 +72,10 @@ export class EditQuestionComponent implements OnInit {
 
     public isDragAndDrop() {
         return this.question.type === QuestionType.DRAG_AND_DROP;
+    }
+
+    public isAlPacoRace() {
+        return this.question.type === QuestionType.AL_PACO_RACE;
     }
 
     public validateQuestionAndSubmit() {

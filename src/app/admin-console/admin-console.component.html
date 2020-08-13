@@ -47,7 +47,7 @@
 							<li class="list-group-item" *ngFor="let player of game.players">
                                 {{player}}
                                 <span class="right">
-                                    Beantwortet: ({{getRightQuestions(game, player)}}/{{game.numOfQuestions}})
+									<span *ngIf="game.startTime === 0">LT: ({{getLastTickFromPlayer(game, player)}}ms)</span> F: ({{getRightQuestions(game, player)}}/{{game.numOfQuestions}})
                                 </span>
                             </li>
 						</ul>

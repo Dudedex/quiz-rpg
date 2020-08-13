@@ -21,6 +21,7 @@ import { ImageSearchQuestionComponent } from './question/image-search-question/i
 import { DragAndDropComponent } from './question/drag-and-drop/drag-and-drop.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import { RunGameComponent } from './question/run-game/run-game.component';
+import { AlPacoRaceComponent } from './quiz-manager/edit-quiz/al-paco-race/al-paco-race.component';
 
 @NgModule({
     declarations: [
@@ -36,7 +37,8 @@ import { RunGameComponent } from './question/run-game/run-game.component';
         DragAndDropEditorComponent,
         ImageSearchQuestionComponent,
         DragAndDropComponent,
-        RunGameComponent
+        RunGameComponent,
+        AlPacoRaceComponent
     ],
     imports: [
         BrowserModule,

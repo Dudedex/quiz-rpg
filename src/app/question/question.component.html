@@ -18,6 +18,14 @@
                 (questionAnsweredFalse)="startErrorTimer()">
         </app-drag-and-drop>
     </ng-container>
+	<ng-container *ngIf="isAlPacoRace()">
+		<app-run-game
+				[lobby]="lobby"
+				[userToken]="userToken"
+				[question]="question"
+				(questionAnsweredCorrectly)="questionAnsweredCorrectly()">
+		</app-run-game>
+	</ng-container>
 	<div class="content" *ngFor="let option of question.options; index as i">
 		<ng-container *ngIf="isCheckboxType()">
 			<label class="btn btn-info w-100 text-left" for="question_{{i}}">

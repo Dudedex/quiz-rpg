@@ -6,6 +6,8 @@ export class Game {
     public players: string[];
     public numOfQuestions: number;
     public questionProgress: any;
+    public lastTick: any;
+    public currentServerTime: number;
     public gameStats: GameStats[];
 }
 

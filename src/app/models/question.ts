@@ -12,4 +12,5 @@ export class Question {
     public wrongAnswerPenalty = 8;
     public rigthAnswerSequel: string;
     public rightAnswerScreenTime = 3;
+    public requiredSteps = 100;
 }

@@ -12,8 +12,8 @@ export class ApiClientService {
 
     constructor(private httpClient: HttpClient) { }
 
-    public checkStartTime(lobby: string) {
-        return this.httpClient.get(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby));
+    public checkStartTime(lobby: string, username: string) {
+        return this.httpClient.post(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby), {username});
     }
 
     public checkAnswer(lobby: string, userToken: string, questionId: string, answerIds: string[]) {

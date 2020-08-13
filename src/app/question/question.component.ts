@@ -2,7 +2,6 @@ import {Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, S
 import {Question} from '../models/question';
 import {AnswerOption} from '../models/answer-option';
 import {QuestionType} from '../models/question-type';
-import {AreaData} from '../models/area-data';
 import {ApiClientService} from '../api-client.service';
 
 @Component({
@@ -92,6 +91,10 @@ export class QuestionComponent implements OnInit, OnChanges {
 
     public isDragAndDrop() {
         return this.question.type === QuestionType.DRAG_AND_DROP;
+    }
+
+    public isAlPacoRace() {
+        return this.question.type === QuestionType.AL_PACO_RACE;
     }
 
     public questionAnsweredCorrectly() {

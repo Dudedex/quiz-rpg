@@ -1,7 +1,13 @@
 <div class="drag-drop-edit-item" cdkDropListGroup>
+	<ngb-alert class="w-100" [type]="'info'" [dismissible]="false">
+		<div class="text-center">
+			<strong>Hinweis:</strong> Ziehe die Einträge in die richtige Reihenfolge!
+		</div>
+	</ngb-alert>
     <div cdkDropList (cdkDropListDropped)="drop($event)">
         <div *ngFor="let option of question.options; let i = index">
-            <div class="btn btn-info drag-drop-edit-item mt-2" cdkDrag>
+			<span class="left w-5 mt-3">{{(i + 1) + '.'}}</span>
+            <div class="btn btn-info drag-drop-edit-item w-95 mt-2" cdkDrag>
                 <span class="left">☰</span> {{option.text}}
             </div>
         </div>
