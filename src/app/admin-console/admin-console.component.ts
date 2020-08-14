@@ -83,7 +83,7 @@ export class AdminConsoleComponent implements OnInit {
     public getGameLink(name: string) {
         const getUrl = window.location;
         const baseUrl = getUrl .protocol + '//' + getUrl.host + '/';
-        return baseUrl + '/quiz-rpg/quiz/' + name;
+        return baseUrl + 'quiz-rpg/quiz/' + name;
     }
 
 }
