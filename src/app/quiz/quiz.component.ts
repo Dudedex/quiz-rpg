@@ -28,6 +28,7 @@ export class QuizComponent implements OnInit {
     public players: string[];
     public endGameStats: EndgameStats;
     public userToken: string;
+    public pingInMs: number;
 
     private currentStep: QuizStep;
     private quizSteps: QuizStep[] = [
@@ -55,10 +56,6 @@ export class QuizComponent implements OnInit {
 
     ngOnInit() {
         this.activeQuestion = 0;
-    }
-
-    public getALPQuestion() {
-        return {requiredSteps: 100} as Question;
     }
 
     public isUsernameStep() {
@@ -189,8 +186,10 @@ export class QuizComponent implements OnInit {
         if (this.quizSteps[this.currentStep] === QuizStep.WAIT_FOR_START) {
             this.startSubscription = interval(500).subscribe(() => {
                 if (!this.blockCall) {
+                    const ping = Date.now();
                     this.apiClient.checkStartTime(this.lobby, this.username).subscribe((res: any) => {
                         this.timeUntilStartInMs = res.timeUntilStartInMs as number;
+                        this.pingInMs = Date.now() - ping;
                         this.players = res.players;
                         if (this.timeUntilStartInMs > 0) {
                             this.blockCall = true;
@@ -200,6 +199,8 @@ export class QuizComponent implements OnInit {
                             }, this.timeUntilStartInMs);
                             this.startSubscription.unsubscribe();
                         }
+                    }, error => {
+                        this.pingInMs = -1;
                     });
                 }
             });

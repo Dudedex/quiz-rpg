@@ -183,7 +183,7 @@ app.post('/:gameId/admin/startGame', bodyParser.json(), function (req, res) {
     if (!validateAdmin(req, res)) {
         return;
     }
-    games[gameId].startTime = Date.now() + 5000;
+    games[gameId].startTime = Date.now() + 7000;
     res.send();
 });
 

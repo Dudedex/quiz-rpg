@@ -29,10 +29,17 @@
             </div>
         </div>
         <div class="col-xs-12 mt-3" *ngIf="isWaitForStart()">
-            <ngb-alert [type]="'warning'" *ngIf="!timeUntilStartInMs" [dismissible]="false">
+            <ngb-alert [type]="'info'" *ngIf="!timeUntilStartInMs && pingInMs !== -1" [dismissible]="false">
                 <div class="text-center">Warte auf Host</div>
+				<div class="text-center" *ngIf="pingInMs">({{pingInMs}}ms)</div>
             </ngb-alert>
-            <ngb-alert [type]="'success'" *ngIf="timeUntilStartInMs" [dismissible]="false">
+			<ngb-alert [type]="'warning'" *ngIf="pingInMs > 1500" [dismissible]="false">
+				Schlechte Internet-Verbindung, es könnte zu Problemen beim Spielablauf kommen.
+			</ngb-alert>
+			<ngb-alert [type]="'danger'" *ngIf="pingInMs === -1" [dismissible]="false">
+				Verbindung zum Server verloren, versuchen Sie einen erneuten Spielbeitritt.
+			</ngb-alert>
+            <ngb-alert [type]="'success'" *ngIf="timeUntilStartInMs && timeUntilStartInMs <= 5000" [dismissible]="false">
                 <div class="text-center"><strong>{{waitTime}}</strong></div>
             </ngb-alert>
             <ul class="list-group mb-1" *ngIf="players">
