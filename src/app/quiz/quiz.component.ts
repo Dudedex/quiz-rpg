@@ -134,12 +134,12 @@ export class QuizComponent implements OnInit {
 
     public startWaitTimer(waitTime) {
         this.waitTime = waitTime;
-        if (this.waitTime <= 1) {
+        if (waitTime <= 1) {
             return;
         }
 
         setTimeout(() => {
-            this.startWaitTimer(this.waitTime - 1);
+            this.startWaitTimer(waitTime - 1);
         }, 1000);
     }
 
@@ -191,7 +191,7 @@ export class QuizComponent implements OnInit {
                         this.timeUntilStartInMs = res.timeUntilStartInMs as number;
                         this.pingInMs = Date.now() - ping;
                         this.players = res.players;
-                        if (this.timeUntilStartInMs > 0) {
+                        if (this.timeUntilStartInMs > 0 && !this.blockCall) {
                             this.blockCall = true;
                             this.startWaitTimer(Math.round((this.timeUntilStartInMs) / 1000));
                             setTimeout(() => {
