@@ -5,6 +5,7 @@ import {QuestionType} from '../../models/question-type';
 import {QuizManagerHelper} from '../utility/quiz-manager-helper';
 import {ApiClientService} from '../../api-client.service';
 import {ImageSearch} from '../../models/image-search';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
     selector: 'app-edit-quiz',
@@ -21,8 +22,11 @@ export class EditQuizComponent implements OnInit {
     @Output()
     public quizCreated = new EventEmitter<void>();
 
+    @Output()
+    public cancelQuizEmit = new EventEmitter<void>();
+
     public tempQuestion: Question;
-    public questionTypes = QuestionType;
+    public editedQuestion: Question;
     public showInvalidQuizError: boolean;
     public showQuizCouldNotBeCreatedError: boolean;
 
@@ -61,9 +65,28 @@ export class EditQuizComponent implements OnInit {
         this.tempQuestion.options.push(QuizManagerHelper.getDummyAnswer());
     }
 
+    public editQuestion(question: Question) {
+        this.editedQuestion = question;
+        this.tempQuestion = undefined;
+    }
+
+
+    public finishQuestionEdit(question: Question) {
+        this.editedQuestion = undefined;
+    }
+
     public addQuestionToQuiz(question: Question) {
         this.quiz.questions.push(question);
         this.tempQuestion = undefined;
+        this.editedQuestion = undefined;
+    }
+
+    public reArrangeQuestion(event: CdkDragDrop<string[]>) {
+        moveItemInArray(this.quiz.questions, event.previousIndex, event.currentIndex);
+    }
+
+    public cancelQuiz() {
+        this.cancelQuizEmit.emit();
     }
     
     public createOrUpdateQuiz() {

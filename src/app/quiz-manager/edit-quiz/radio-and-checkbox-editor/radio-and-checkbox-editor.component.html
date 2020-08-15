@@ -15,7 +15,7 @@
         <input class="w-90 ml-2" type="text" [(ngModel)]="option.text" [placeholder]="'Antwort...'">
         <button class="btn btn-secondary right pl-1 pr-1 pt-0 pb-0" (click)="deleteAnswerOption(i)">X</button>
     </label>
-    <input class="ml-5 w-90 mb-2" type="text" *ngIf="!option.correct" [(ngModel)]="option.wrongAnswerHint"
+    <input class="ml-5 w-90 mb-2" type="text" *ngIf="!option.correct && isRadio()" [(ngModel)]="option.wrongAnswerHint"
            [placeholder]="'Falsche Antwort => Hinweis für Spieler...'">
 </div>
 <button class="btn btn-primary w-100" (click)="addQuestionAnswerOption()">Neue Antwortoption hinzufügen</button>

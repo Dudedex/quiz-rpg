@@ -73,7 +73,14 @@
 					</li>
 				</ul>
 			</ngb-alert>
-			<button class="btn btn-primary w-100" (click)="validateQuestionAndSubmit()">Frage zu Quiz hinzufügen</button>
+			<button class="btn btn-primary w-100" (click)="validateQuestionAndSubmit()">
+                <ng-container *ngIf="isNewQuestion">
+                    Frage zu Quiz hinzufügen
+                </ng-container>
+                <ng-container *ngIf="!isNewQuestion">
+                    Speichern
+                </ng-container>
+            </button>
 		</div>
 	</div>
 </div>

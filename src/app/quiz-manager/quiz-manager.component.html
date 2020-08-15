@@ -6,9 +6,59 @@
             Quiz wurde erstellt
         </div>
     </ngb-alert>
-    <h3>Token</h3>
-    <input class="w-100" type="password" [(ngModel)]="token" [placeholder]="'token...'">
-    <button class="btn btn-primary w-100 mt-2" *ngIf="!tempQuiz" (click)="createNewQuiz()">Neues Quiz erstellen</button>
-    <hr>
-    <app-edit-quiz [quiz]="tempQuiz" [token]="token" (quizCreated)="quizWasCreated()"></app-edit-quiz>
+    <ng-container *ngIf="!loggedIn">
+        <h3>Token</h3>
+        <ngb-alert [type]="'danger'" class="w-100" *ngIf="logInFailed" [dismissible]="false">
+            <div class="text-center">
+                Fehlerhaftes Token
+            </div>
+        </ngb-alert>
+        <input class="w-100" type="password" [(ngModel)]="token" [placeholder]="'token...'">
+        <button class="btn btn-primary mt-2 w-100" (click)="logIn()">Einloggen</button>
+    </ng-container>
+    <ng-container *ngIf="loggedIn">
+        <ng-container *ngIf="!tempQuiz && !editedQuiz">
+            <h3>Vorhandene Quizzes</h3>
+            <div ngbDropdown class="w-100" *ngIf="quizzes">
+                <button class="btn btn-outline-secondary w-100" ngbDropdownToggle>
+                    <ng-container *ngIf="selectedQuiz">
+                        {{selectedQuiz.name}}
+                    </ng-container>
+                    <ng-container *ngIf="!selectedQuiz">
+                        Quiz auswählen
+                    </ng-container>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="Fragentyp">
+                    <button class="w-100" ngbDropdownItem *ngFor="let quiz of quizzes"
+                            (click)="selectedQuiz = quiz">
+                        {{quiz.name}}
+                    </button>
+                </div>
+            </div>
+            <button class="btn btn-primary w-100 mt-2" (click)="startQuizEdit()">Quiz bearbeiten
+            </button>
+        </ng-container>
+        <ng-container *ngIf="!tempQuiz && !editedQuiz">
+            <h3>Quiz</h3>
+            <button class="btn btn-primary w-100 mt-2" (click)="createNewQuiz()">Neues Quiz
+                erstellen
+            </button>
+        </ng-container>
+        <hr>
+        <app-edit-quiz
+                *ngIf="editedQuiz"
+                [quiz]="editedQuiz"
+                [token]="token"
+                (quizCreated)="quizWasCreated()"
+                (cancelQuizEmit)="cancelQuiz()"
+        ></app-edit-quiz>
+        <app-edit-quiz
+                *ngIf="tempQuiz"
+                [quiz]="tempQuiz"
+                [token]="token"
+                (quizCreated)="quizWasCreated()"
+                (cancelQuizEmit)="cancelQuiz()"
+        ></app-edit-quiz>
+    </ng-container>
+
 </div>

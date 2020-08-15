@@ -81,6 +81,20 @@ export class ApiClientService {
         });
     }
 
+    public verifyAdmin(token: string) {
+        const headers = new HttpHeaders().set('Authorization', token);
+        return this.httpClient.post(ApiClientService.BASE_PATH  + 'admin/verify', {}, {
+            headers
+        });
+    }
+
+    public loadExistingQuizzes(token: string) {
+        const headers = new HttpHeaders().set('Authorization', token);
+        return this.httpClient.post(ApiClientService.BASE_PATH  + 'admin/quizzes', {}, {
+            headers
+        });
+    }
+
     private static streamLineLobby(lobby: string) {
         return lobby.replace('/', '') + '/';
     }

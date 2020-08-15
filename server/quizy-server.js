@@ -264,6 +264,29 @@ app.get('/admin/games', bodyParser.json(), function (req, res) {
     res.send(gameObject);
 });
 
+app.post('/admin/quizzes', bodyParser.json(), function (req, res) {
+    if (!validateAdmin(req, res)) {
+        return;
+    }
+    const path = 'quizzes/custom-quiz/';
+    const files = fs.readdirSync(path);
+    const quizzes = [];
+    for (var file of files) {
+        const quiz = JSON.parse(fs.readFileSync(path + file));
+        quiz.isNew = false;
+        quizzes.push(quiz);
+    }
+    res.send(quizzes);
+});
+
+app.post('/admin/verify', bodyParser.json(), function (req, res) {
+    if (!validateAdmin(req, res)) {
+        return;
+    }
+    res.send({});
+});
+
+
 app.post('/admin/quiz/createOrUpdate', bodyParser.json({limit: '50mb', parameterLimit:50000}), function (req, res) {
     if (!validateAdmin(req, res)) {
         return;
@@ -319,7 +342,7 @@ function addOrClearGame(gameId, quizFileName, isClear) {
     games[gameId].lastTick = {};
     games[gameId].gameStats = [];
     games[gameId].gameFileName = quizFileName;
-    games[gameId].quiz = JSON.parse(fs.readFileSync(path.join(__dirname, '/quizzes/' + quizFileName)));
+    games[gameId].quiz = JSON.parse(fs.readFileSync('quizzes/' + quizFileName));
     rightAnswers[gameId] = {};
     questionIdToQuestionMap[gameId] = {};
     games[gameId].quiz.questions.forEach((q) => {
