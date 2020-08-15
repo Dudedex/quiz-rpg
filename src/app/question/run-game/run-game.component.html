@@ -1,11 +1,11 @@
-<div class="question-container" style="{{'background-image: url(' + background + ')'}};background-size: 360px 400px;background-position: -{{steps * 30}}px 0px; ">
-	<img [src]="currentImage" *ngIf="currentImage && !winningImage" width="360" height="400"/>
-	<img [src]="winningImage" *ngIf="winningImage && !currentImage" width="360" height="400"/>
+<div class="question-container" style="{{'background-image: url(' + background + ')'}};background-size: 360px 100%;background-position: -{{steps * 30}}px 0px; ">
+	<img class="alpaco-img" [src]="currentImage" *ngIf="currentImage && !winningImage" width="360" height="360" #imageElement/>
+	<img class="alpaco-img" [src]="winningImage" *ngIf="winningImage && !currentImage" width="360" height="360"/>
+    <div class="distanz-display" *ngIf="!showIntro && !showOutro && !winningImage">
+        Distanz: {{steps}}m/{{stepsToFinish}}m
+    </div>
 </div>
 <button class="btn btn-primary mt-1 w-100 manipulation" *ngIf="this.currentImage && !this.showIntro" (click)="run()">LAUF</button>
-<div class="mt-2">
-	Distanz: {{steps}}m/{{stepsToFinish}}m
-</div>
 <ngb-alert class="overlay-hint" *ngIf="showIntro" [type]="'info'" [dismissible]="false">
 	<div class="text-center">
 		<h3>

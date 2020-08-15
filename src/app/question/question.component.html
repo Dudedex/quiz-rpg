@@ -1,5 +1,5 @@
 <div class="question-container" *ngIf="question">
-	<h5><span [innerHtml]="question.title"></span></h5>
+	<span [innerHtml]="question.title"></span>
     <ng-container *ngIf="isImageSearch()">
         <app-image-search-question
                 [lobby]="lobby"

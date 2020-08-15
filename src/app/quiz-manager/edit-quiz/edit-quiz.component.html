@@ -27,7 +27,7 @@
     <app-edit-question *ngIf="editedQuestion" [question]="editedQuestion" (questionAdded)="finishQuestionEdit($event)"></app-edit-question>
     <app-edit-question *ngIf="tempQuestion" [question]="tempQuestion" [isNewQuestion]="true" (questionAdded)="addQuestionToQuiz($event)"></app-edit-question>
     <hr>
-    <button class="btn btn-primary w-100 mt-2" *ngIf="!tempQuestion && !editedQuestion" (click)="createOrUpdateQuiz()">Quiz {{quiz.isNew ? 'erstellen' : 'bearbeiten'}}</button>
+    <button class="btn btn-primary w-100 mt-2" *ngIf="!tempQuestion && !editedQuestion" (click)="createOrUpdateQuiz()">Quiz {{quiz.isNew ? 'erstellen' : 'speichern'}}</button>
     <button class="btn btn-primary w-100 mt-2" *ngIf="!tempQuestion && !editedQuestion" (click)="cancelQuiz()">Abbrechen</button>
 </ng-container>
 

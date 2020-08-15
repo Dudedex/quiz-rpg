@@ -7,12 +7,21 @@
 }
 
 .drag-drop-edit-item {
-    width: 100% !important;
-    max-width:420px !important;
+  width: 100% !important;
+  max-width: 420px !important;
+}
+
+.distanz-display {
+  position: absolute;
+  z-index: 10000 !important;
+  top: 0;
+  right: 1rem;
+  font-size: 20px;
+  color: yellow;
 }
 
 .margin-auto {
-    margin: auto;
+  margin: auto;
 }
 
 .text-center {
@@ -89,7 +98,7 @@
 }
 
 .manipulation {
-    touch-action: manipulation;
+  touch-action: manipulation;
 }
 
 img[usemap] {
@@ -97,6 +106,14 @@ img[usemap] {
   height: auto;
   max-width: 100%;
   width: 420px;
+  cursor: pointer;
+}
+
+.alpaco-img {
+  border: none;
+  max-width: 100%;
+  width: 420px;
+  height: 420px;
   cursor: pointer;
 }
 
