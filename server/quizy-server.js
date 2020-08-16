@@ -180,7 +180,7 @@ app.post('/:gameId/finished', bodyParser.json(), function (req, res) {
     }
     const username = userTokens[userToken];
     const progress = games[gameId].questionProgress[username];
-    if (progress.length >= games[gameId].quiz.questions.length) {
+    if (progress.length < games[gameId].quiz.questions.length) {
         console.error('Player who did not finised called finished endpoint: ' + username);
         res.status(401).send();
         return;
