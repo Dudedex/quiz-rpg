@@ -4,19 +4,20 @@ import {TestQuiz} from '../quizzes/test-quiz';
 import {ApiClientService} from '../api-client.service';
 import {QuizStep} from '../models/quiz-step';
 import {interval, Subscription} from 'rxjs';
-import {GameStats} from '../models/game-stats';
 import {EndgameStats} from '../models/endgame-stats';
 import {ActivatedRoute} from '@angular/router';
-import {Question} from '../models/question';
 
 @Component({
     selector: 'app-quiz',
     templateUrl: './quiz.component.html'
 })
-export class QuizComponent implements OnInit {
+export class QuizComponent {
+
+    readonly USER_TOKEN_LOCAL_STORAGE_VALUE = 'userToken';
+    readonly LOBBY_LOCAL_STORAGE_VALUE = 'lobby';
 
     public username: string;
-    public lobby: string = 'show';
+    public lobby: string;
     public lobbySetByPath: boolean;
     public showLobbyError: boolean;
     public showUsernameError: boolean;
@@ -45,8 +46,27 @@ export class QuizComponent implements OnInit {
     constructor(private apiClient: ApiClientService,
                 private route: ActivatedRoute) {
         this.currentStep = 0;
+        this.activeQuestion = 0;
         this.lobbySetByPath = false;
-        this.route.params.subscribe( params => {
+        if (window.localStorage.getItem(this.USER_TOKEN_LOCAL_STORAGE_VALUE)
+            && window.localStorage.getItem(this.LOBBY_LOCAL_STORAGE_VALUE)) {
+            this.userToken = window.localStorage.getItem(this.USER_TOKEN_LOCAL_STORAGE_VALUE);
+            this.lobby = window.localStorage.getItem(this.LOBBY_LOCAL_STORAGE_VALUE);
+            this.apiClient.restorePlayer(this.lobby, this.userToken).subscribe((res: any) => {
+                this.activeQuestion = res.progressIndex;
+                if (this.activeQuestion >= res.quiz.questions.length) {
+                    this.activeQuestion = 0;
+                    window.localStorage.removeItem(this.LOBBY_LOCAL_STORAGE_VALUE);
+                    window.localStorage.removeItem(this.USER_TOKEN_LOCAL_STORAGE_VALUE);
+                    return;
+                }
+                this.quiz = res.quiz;
+                this.username = res.username;
+                this.currentStep = QuizStep.QUIZ;
+            });
+        }
+
+        this.route.params.subscribe(params => {
             if (params.lobby) {
                 this.lobby = params.lobby;
                 this.lobbySetByPath = true;
@@ -54,9 +74,6 @@ export class QuizComponent implements OnInit {
         });
     }
 
-    ngOnInit() {
-        this.activeQuestion = 0;
-    }
 
     public isUsernameStep() {
         return this.quizSteps[this.currentStep] === QuizStep.USERNAME;
@@ -88,22 +105,22 @@ export class QuizComponent implements OnInit {
         switch (this.quizSteps[this.currentStep]) {
             case QuizStep.LOBBY_SELECTION:
                 this.apiClient.registerPlayer(this.lobby, this.username).subscribe(
-                        (res: any) => {
-                            this.showLobbyError = false;
-                            this.showUsernameError = false;
-                            this.userToken = res.userToken;
-                            this.progressToNextStep();
-                            this.quiz = res.quiz;
-                            this.randomizeAnswers();
-                        },
-                        (error) => {
-                            if (error.status === 404) {
-                                this.showLobbyError = true;
-                            } else {
-                                this.showUsernameError = true;
-                                this.currentStep = 0;
-                            }
+                    (res: any) => {
+                        this.showLobbyError = false;
+                        this.showUsernameError = false;
+                        this.userToken = res.userToken;
+                        this.progressToNextStep();
+                        this.quiz = res.quiz;
+                        this.randomizeAnswers();
+                    },
+                    (error) => {
+                        if (error.status === 404) {
+                            this.showLobbyError = true;
+                        } else {
+                            this.showUsernameError = true;
+                            this.currentStep = 0;
                         }
+                    }
                 );
                 break;
             case QuizStep.END_LOBBY:
@@ -170,10 +187,10 @@ export class QuizComponent implements OnInit {
 
     private validateStep() {
         switch (this.quizSteps[this.currentStep]) {
-        case QuizStep.USERNAME:
-            return this.username && this.username.trim() !== '' && this.username.trim().length > 2;
-        case QuizStep.LOBBY_SELECTION:
-            return this.lobby && this.lobby.trim() !== '';
+            case QuizStep.USERNAME:
+                return this.username && this.username.trim() !== '' && this.username.trim().length > 2;
+            case QuizStep.LOBBY_SELECTION:
+                return this.lobby && this.lobby.trim() !== '';
         }
         return true;
     }
@@ -192,6 +209,8 @@ export class QuizComponent implements OnInit {
                         this.pingInMs = Date.now() - ping;
                         this.players = res.players;
                         if (this.timeUntilStartInMs > 0 && !this.blockCall) {
+                            window.localStorage.setItem(this.USER_TOKEN_LOCAL_STORAGE_VALUE, this.userToken);
+                            window.localStorage.setItem(this.LOBBY_LOCAL_STORAGE_VALUE, this.lobby);
                             this.blockCall = true;
                             this.startWaitTimer(Math.round((this.timeUntilStartInMs) / 1000));
                             setTimeout(() => {

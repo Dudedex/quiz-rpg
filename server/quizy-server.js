@@ -99,6 +99,39 @@ app.post('/:gameId/registerPlayer', bodyParser.json(), function (req, res) {
     });
 });
 
+app.post('/:gameId/restorePlayer', bodyParser.json(), function (req, res) {
+    const gameId = req.params.gameId;
+    const userToken = req.body.userToken;
+    if (gameId === undefined
+        || userToken === undefined
+        || userToken.trim() === ''
+        || games[gameId] === undefined
+        || (games[gameId].startTime === 0)) {
+        res.status(404).send();
+        return;
+    }
+    const username = userTokens[userToken];
+    if (!username) {
+        console.error('User not found => abort restoration');
+        res.status(404).send();
+        return;
+    }
+    console.log('Restoring player "' + username + '"');
+    const progress = games[gameId].questionProgress[username];
+    const lastQuestionAnswer = progress[progress.length-1];
+    var progressIndex;
+    if (lastQuestionAnswer.rightAnswerOffset * 1000 <= Date.now() - lastQuestionAnswer.time) {
+        progressIndex = progress.length;
+    } else {
+        progressIndex = progress.length - 1;
+    }
+    res.send({
+        quiz: games[gameId].quiz,
+        username,
+        progressIndex: progressIndex
+    });
+});
+
 app.post('/:gameId/checkAnswer', bodyParser.json(), function (req, res) {
     const gameId = req.params.gameId;
     const questionId = req.body.questionId;
@@ -113,8 +146,6 @@ app.post('/:gameId/checkAnswer', bodyParser.json(), function (req, res) {
         || questionIdToQuestionMap[gameId][questionId] === undefined
         || !Array.isArray(answerIds)) {
         console.log('checkAnswer => precheck failed for game ' + gameId);
-        console.log(userToken);
-        console.log(userTokens[userToken]);
         res.status(400).send();
         return;
     }
@@ -147,9 +178,16 @@ app.post('/:gameId/finished', bodyParser.json(), function (req, res) {
         res.status(400).send();
         return;
     }
+    const progress = games[gameId].questionProgress[username];
+    if (progress.length >= games[gameId].quiz.questions.length) {
+        const username = userTokens[userToken];
+        console.error('Player who did not finised called finished endpoint: ' + username);
+        res.status(401).send();
+        return;
+    }
     const username = userTokens[userToken];
     console.log('Player "' + username + '" finished the game in (' + (Date.now() - games[gameId].startTime) + ' ms)');
-    var wrongAnswers = games[gameId].questionProgress[username].filter(q => !q.answeredCorrectly);
+    var wrongAnswers = progress.filter(q => !q.answeredCorrectly);
     games[gameId].gameStats.push({
         username,
         finishedTime: Date.now(),
@@ -420,8 +458,13 @@ function trackProgress(gameId, userToken, question, answeredCorrectly) {
     if (!games[gameId].questionProgress[username]) {
         games[gameId].questionProgress[username] = [];
     }
+    if (games[gameId].questionProgress[username].findIndex(qp => qp.questionId === question.uuid) !== -1) {
+        console.log('Question answered already => skipping progress');
+        return;
+    }
     games[gameId].questionProgress[username].push({
         questionId: question.uuid,
+        rightAnswerOffset: question.rightAnswerScreenTime,
         time: Date.now(),
         answeredCorrectly
     })

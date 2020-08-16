@@ -32,6 +32,10 @@ export class ApiClientService {
         return this.httpClient.post(ApiClientService.BASE_PATH + ApiClientService.streamLineLobby(lobby) + 'registerPlayer', {username});
     }
 
+    public restorePlayer(lobby: string, userToken: string) {
+        return this.httpClient.post(ApiClientService.BASE_PATH + ApiClientService.streamLineLobby(lobby) + 'restorePlayer', {userToken});
+    }
+
     public loadStats(lobby: string) {
         return this.httpClient.post(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby) + 'endGameStats', {});
     }
