@@ -178,14 +178,13 @@ app.post('/:gameId/finished', bodyParser.json(), function (req, res) {
         res.status(400).send();
         return;
     }
+    const username = userTokens[userToken];
     const progress = games[gameId].questionProgress[username];
     if (progress.length >= games[gameId].quiz.questions.length) {
-        const username = userTokens[userToken];
         console.error('Player who did not finised called finished endpoint: ' + username);
         res.status(401).send();
         return;
     }
-    const username = userTokens[userToken];
     console.log('Player "' + username + '" finished the game in (' + (Date.now() - games[gameId].startTime) + ' ms)');
     var wrongAnswers = progress.filter(q => !q.answeredCorrectly);
     games[gameId].gameStats.push({
