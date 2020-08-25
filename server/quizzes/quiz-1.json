@@ -24,6 +24,7 @@
         }
       ],
       "rightAnswerScreenTime":3,
+      "wrongAnswerPenalty": 5,
       "title":"Welche Show ist die bessere?",
       "rigthAnswerSequel":"Herzlich Willkommen bei \"Keine Show - Die Show\" <br>Spezial-Runde",
       "type":"RADIO"
@@ -50,6 +51,7 @@
         }
       ],
       "rightAnswerScreenTime":4,
+      "wrongAnswerPenalty": 5,
       "title":"Wie viel Prozent gibt Arnold in jeder Show?",
       "wrongAnswerHint":"Mehr als Doppelkorn geht nicht",
       "rigthAnswerSequel":"Und immer schön 15 Minuten ziehen lassen",
@@ -60,6 +62,7 @@
 
       ],
       "rightAnswerScreenTime":3,
+      "wrongAnswerPenalty": 5,
       "title":"Michi: \"Scheiße! Gleich ist Keine Show - die Show! und ich kann meine Sachen für den Trick nicht finden....Wo zur Hölle sind meine \"Quietsche-Ente\", mein \"Handy\" und meine \"Banane\"",
       "rigthAnswerSequel":"Michi: \"Jetzt wird Arnold kotzen!\"",
       "type":"IMAGE_SEARCH",
@@ -117,6 +120,7 @@
         }
       ],
       "rightAnswerScreenTime":2,
+      "wrongAnswerPenalty": 5,
       "title":"Welche Farbe hatte Jannas Trick?",
       "rigthAnswerSequel":"Drilldotastisch!",
       "type":"RADIO"
@@ -143,6 +147,7 @@
         }
       ],
       "rightAnswerScreenTime":3,
+      "wrongAnswerPenalty": 5,
       "title":"Wer hat Sarah die Krone von Kutte übergeben? <br>(2 Antworten sind richtig)",
       "rigthAnswerSequel":"Lang lebe die Queen",
       "wrongAnswerHint":"♫♫♫ <br> Und im ewigen Kreis <br> dreht sich unser Leben <br> dem Gesetz der Natur <br> sind wir geweiht <br> ♫♫♫",
@@ -170,6 +175,7 @@
         }
       ],
       "rightAnswerScreenTime":3,
+      "wrongAnswerPenalty": 5,
       "title":"Wo besorgt sich Arnold seine Inneneinrichtung?",
       "wrongAnswerHint":"Als ob ich bezahlen würden sesesesesseeeeee",
       "rigthAnswerSequel":"Whats poppin?!?!?!",
@@ -196,6 +202,7 @@
         }
       ],
       "rightAnswerScreenTime":4,
+      "wrongAnswerPenalty": 5,
       "title":"Welches Verkehrsmittel fährt Sarah bis zum Kotzen?",
       "rigthAnswerSequel":"♫♫♫ <br>Eine Seefahrt die ist lustig, <br>eine Seefahrt die ist schön <br>♫♫♫",
       "wrongAnswerHint":"Mir ist immer noch schwindelig.<br>Michi, ist das normal?",
@@ -223,6 +230,7 @@
         }
       ],
       "rightAnswerScreenTime":4,
+      "wrongAnswerPenalty": 5,
       "title":"Bei welchen Quiz-Kategorien ist sich Richy so \"sicher\", dass er die Fragen nicht einmal liest?<br>(2 Antworten sind richtig)",
       "rigthAnswerSequel":"Wie kann es sein, dass ich nicht eine richtig geraten habe!",
       "wrongAnswerHint":"Ich hab doch gar nicht gemeckert!",
@@ -250,6 +258,7 @@
         }
       ],
       "rightAnswerScreenTime":4,
+      "wrongAnswerPenalty": 5,
       "title":"Welche <strong>Hautfarbe</strong> sieht man bei Laura häufig?",
       "wrongAnswerHint":"Man wird nicht immer beim Baden heller",
       "rigthAnswerSequel":"Sieht man wie rot ich bin?... <br> Sieht man das in der Kamera?",
@@ -260,6 +269,7 @@
 
       ],
       "rightAnswerScreenTime":3,
+      "wrongAnswerPenalty": 5,
       "title":"...",
       "rigthAnswerSequel":"Ihr Anruf wurde beendet!",
       "type":"IMAGE_SEARCH",

@@ -6,6 +6,7 @@ import {QuizStep} from '../models/quiz-step';
 import {interval, Subscription} from 'rxjs';
 import {EndgameStats} from '../models/endgame-stats';
 import {ActivatedRoute} from '@angular/router';
+import {Question} from '../models/question';
 
 @Component({
     selector: 'app-quiz',
@@ -43,6 +44,8 @@ export class QuizComponent {
     private quiz: Quiz;
     private blockCall: boolean;
 
+    public dummyQuestion: Question;
+
     constructor(private apiClient: ApiClientService,
                 private route: ActivatedRoute) {
         this.currentStep = 0;
@@ -71,6 +74,24 @@ export class QuizComponent {
                 this.lobby = params.lobby;
                 this.lobbySetByPath = true;
             }
+        });
+
+        this.dummyQuestion = new Question();
+        this.dummyQuestion.checkInFlows.push({
+            in: 3,
+            out: 0,
+        });
+        this.dummyQuestion.checkInFlows.push({
+            in: 0,
+            out: 2,
+        });
+        this.dummyQuestion.checkInFlows.push({
+            in: 5,
+            out: 0,
+        });
+        this.dummyQuestion.checkInFlows.push({
+            in: 2,
+            out: 3,
         });
     }
 

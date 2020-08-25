@@ -1,0 +1,47 @@
+<button (click)="toggleRun()">run</button>
+
+<div style="position: relative; width: 100%; height: 303px; overflow-x: hidden; border-bottom: 3px solid #aaaaaa" *ngIf="!this.showQuestion">
+    <img [src]="city" height="300px" width="100%" style="bottom: 0">
+    <img [src]="hotel" height="150px" width="6%" style="bottom: 0; right: 0;position: absolute; z-index: 50;" >
+    <div [@check-in]="checkInQueue.length"
+         (@check-in.done)="checkedIn($event)">
+        <div *ngFor="let item of checkInQueue; let i = index" style="width: 100%; height: 300px; position: absolute; left: 0; right: 0; top: 0;">
+            <img [src]="getRunningImage(i, true)" style="width: 50px; height: 50px;bottom: 0; position: absolute;"/>
+        </div>
+    </div>
+
+    <div [@check-out]="checkOutQueue.length"
+         (@check-out.done)="checkedOut($event)">
+        <div *ngFor="let item of checkOutQueue; let i = index" style="width: 100%; height: 300px; position: absolute; left: 0; right: 0; top: 0;">
+            <img [src]="getRunningImage(i, false)" style="width: 50px; height: 50px;bottom: 0; position: absolute;"/>
+        </div>
+    </div>
+</div>
+<ngb-alert class="overlay-hint" *ngIf="showIntro" [type]="'info'" [dismissible]="false">
+    <div class="text-center">
+        <h3>
+            Al Paco hatte Sturmfrei! MENSCH ARNOLD!
+        </h3>
+        <div class="mt-3">
+            Er hat natürlich seine ganzen AlPacoBros eingeladen um mit ihnen zu feiern.<br>
+            Jedoch hat er nicht genügend Schlafplätze in seiner kleinen WG... seseseseseee<br>
+            GOTT SEI DANK SIND IN DER NÄHE HOTELS!<br>
+            Nur ist AlPaco halt immernoch Student und will nicht arm werden...<br>
+            Deshalb hat er den Hotelier gefragt, ob er ihm sagen kann wie viele wirklich im Hotel übernachtet haben.
+        </div>
+        <h3 class="mt-3">
+            ACTIONRUNDE... Du bist der Hotelier
+        </h3>
+        <div class="mt-3" *ngIf="timeInSecondsTillStart <= 10">
+            <div>
+                <strong>Sei bereit!</strong>
+            </div>
+            <div>Es geht los in</div>
+            <div>
+                <h4>{{timeInSecondsTillStart}}</h4>
+            </div>
+        </div>
+    </div>
+</ngb-alert>
+
+

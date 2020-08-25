@@ -47,36 +47,6 @@ export class QuestionComponent implements OnInit, OnChanges {
         this.questionedOpened = Date.now();
     }
 
-    public checkRadioOption(selectedAnswer: AnswerOption) {
-        if (this.errorPenalty) {
-            return;
-        }
-        for (const option of this.question.options) {
-            option.checked = false;
-        }
-        selectedAnswer.checked = true;
-        this.checkAnswer();
-    }
-
-    public checkAnswer() {
-        if (this.errorPenalty) {
-            return;
-        }
-        const answerIds = this.question.options.filter(o => o.checked).map(o => o.uuid);
-        this.apiClient.checkAnswer(this.lobby, this.userToken, this.question.uuid, answerIds).subscribe((res: any) => {
-            if (res.correct) {
-                this.questionAnsweredCorrectly();
-            } else {
-                if (answerIds.length === 1) {
-                    this.wrongAnswerSpecial = this.question.options.find(a => a.uuid === answerIds[0]).wrongAnswerHint;
-                } else {
-                    this.wrongAnswerSpecial = undefined;
-                }
-                this.startErrorTimer();
-            }
-        });
-    }
-
     public isCheckboxType() {
         return this.question.type === QuestionType.CHECKBOX;
     }
@@ -113,13 +83,20 @@ export class QuestionComponent implements OnInit, OnChanges {
         }
     }
 
-    public startErrorTimer() {
+    public startErrorTimer(wrongAnswerSpecial?: string) {
         if (this.errorPenalty) {
             return;
         }
+        console.log('called');
+        if (wrongAnswerSpecial) {
+            this.wrongAnswerSpecial = wrongAnswerSpecial;
+        }
+        console.log('test');
         this.errorPenalty = true;
+        console.log(this.errorPenalty);
         this.countErrorTime(this.question.wrongAnswerPenalty);
         setTimeout(() => {
+            console.log('resetting error penalty');
             this.errorPenalty = false;
         }, this.question.wrongAnswerPenalty * 1000);
     }

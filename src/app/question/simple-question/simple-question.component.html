@@ -1,0 +1,16 @@
+<div class="content" *ngFor="let option of question.options; index as i">
+    <ng-container *ngIf="isCheckboxType()">
+        <label class="btn btn-info w-100 text-left" for="question_{{i}}">
+            <input type="checkbox" id="question_{{i}}" [(ngModel)]="option.checked">
+            {{option.text}}
+        </label>
+    </ng-container>
+    <ng-container *ngIf="isRadioType()">
+        <button class="btn btn-info w-100 mt-2" (click)="checkRadioOption(option)">
+            {{option.text}}
+        </button>
+    </ng-container>
+</div>
+<button class="btn btn-primary w-100" [disabled]="errorPenalty" *ngIf="isCheckboxType()" (click)="checkAnswer()">
+    Antwort abgeben
+</button>

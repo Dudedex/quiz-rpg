@@ -42,6 +42,7 @@ export class RunGameComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         this.steps = 0;
+        this.timeInSecondsTillStart = undefined;
         this.currentImage = this.runArray[1];
         this.winningImage = undefined;
         this.stepsToFinish = this.question.requiredSteps;
@@ -61,7 +62,6 @@ export class RunGameComponent implements OnChanges {
             this.countTimeInSeconds(time - 1);
         }, 999);
     }
-
 
     public run() {
         if (this.showIntro) {

@@ -19,7 +19,7 @@ export class DragAndDropComponent implements OnChanges {
     public userToken: string;
 
     @Input()
-    public errorPenalty: number;
+    public errorPenalty: boolean;
 
     @Output()
     public questionAnsweredCorrectly = new EventEmitter();

@@ -111,19 +111,22 @@ app.post('/:gameId/restorePlayer', bodyParser.json(), function (req, res) {
         return;
     }
     const username = userTokens[userToken];
-    if (!username) {
+    if (!username
+        || !games[gameId].questionProgress[username]
+        || games[gameId].questionProgress[username].length === 0) {
         console.error('User not found => abort restoration');
         res.status(404).send();
         return;
     }
     console.log('Restoring player "' + username + '"');
     const progress = games[gameId].questionProgress[username];
+    const lastRightQuestionAnswerIndex = progress.filter(q => q.answeredCorrectly).length;
     const lastQuestionAnswer = progress[progress.length-1];
     var progressIndex;
-    if (lastQuestionAnswer.rightAnswerOffset * 1000 <= Date.now() - lastQuestionAnswer.time) {
-        progressIndex = progress.length;
+    if (lastQuestionAnswer && lastQuestionAnswer.rightAnswerOffset * 1000 <= Date.now() - lastQuestionAnswer.time) {
+        progressIndex = lastRightQuestionAnswerIndex
     } else {
-        progressIndex = progress.length - 1;
+        progressIndex = lastRightQuestionAnswerIndex - 1;
     }
     res.send({
         quiz: games[gameId].quiz,
@@ -457,7 +460,7 @@ function trackProgress(gameId, userToken, question, answeredCorrectly) {
     if (!games[gameId].questionProgress[username]) {
         games[gameId].questionProgress[username] = [];
     }
-    if (games[gameId].questionProgress[username].findIndex(qp => qp.questionId === question.uuid) !== -1) {
+    if (games[gameId].questionProgress[username].findIndex(qp => qp.questionId === question.uuid && qp.answeredCorrectly) !== -1) {
         console.log('Question answered already => skipping progress');
         return;
     }

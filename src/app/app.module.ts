@@ -22,6 +22,9 @@ import { DragAndDropComponent } from './question/drag-and-drop/drag-and-drop.com
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import { RunGameComponent } from './question/run-game/run-game.component';
 import { AlPacoRaceComponent } from './quiz-manager/edit-quiz/al-paco-race/al-paco-race.component';
+import { CheckInComponent } from './question/check-in/check-in.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { SimpleQuestionComponent } from './question/simple-question/simple-question.component';
 
 @NgModule({
     declarations: [
@@ -38,10 +41,13 @@ import { AlPacoRaceComponent } from './quiz-manager/edit-quiz/al-paco-race/al-pa
         ImageSearchQuestionComponent,
         DragAndDropComponent,
         RunGameComponent,
-        AlPacoRaceComponent
+        AlPacoRaceComponent,
+        CheckInComponent,
+        SimpleQuestionComponent
     ],
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         FormsModule,
         HttpClientModule,
         NgbModule,
