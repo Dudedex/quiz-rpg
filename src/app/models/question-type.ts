@@ -3,5 +3,6 @@ export enum QuestionType {
     RADIO = 'RADIO',
     IMAGE_SEARCH = 'IMAGE_SEARCH',
     DRAG_AND_DROP = 'DRAG_AND_DROP',
-    AL_PACO_RACE = 'AL_PACO_RACE'
+    AL_PACO_RACE = 'AL_PACO_RACE',
+    CHECK_IN_AND_OUT = 'CHECK_IN_AND_OUT'
 }

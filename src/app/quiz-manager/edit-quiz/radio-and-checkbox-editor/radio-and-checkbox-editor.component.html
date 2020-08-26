@@ -4,7 +4,7 @@
         richtig beantwortet ist
     </div>
 </ngb-alert>
-<ngb-alert [type]="'warning'" *ngIf="isRadio()" [dismissible]="false">
+<ngb-alert [type]="'warning'" *ngIf="isRadio() || isCheckInAndOut()" [dismissible]="false">
     <div class="text-center">Eine richtige Antwort muss vom Spieler angeklickt werden damit die Frage
         richtig beantwortet ist
     </div>

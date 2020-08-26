@@ -1,8 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {Question} from '../models/question';
-import {AnswerOption} from '../models/answer-option';
-import {QuestionType} from '../models/question-type';
-import {ApiClientService} from '../api-client.service';
+import {Question} from '../../models/question';
+import {QuestionType} from '../../models/question-type';
+import {ApiClientService} from '../../api-client.service';
 
 @Component({
     selector: 'app-question',
@@ -28,9 +27,12 @@ export class QuestionComponent implements OnInit, OnChanges {
     public wrongAnswerPenaltySeconds: number;
     public rightAnswerSequelSeconds: number;
     public questionedOpened: number;
-    private submitted: boolean;
+    public skippingQuestionPossible: boolean;
+    public timeRemainingForSkip: number;
     public showRightAnswersHint: boolean;
     public wrongAnswerSpecial: string;
+
+    private submitted: boolean;
 
     constructor(private apiClient: ApiClientService) {
     }
@@ -40,11 +42,27 @@ export class QuestionComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        if (!changes.question) {
+            return;
+        }
         this.errorPenalty = false;
         this.wrongAnswerPenaltySeconds = undefined;
         this.submitted = false;
         this.wrongAnswerSpecial = undefined;
         this.questionedOpened = Date.now();
+        this.timeRemainingForSkip = undefined;
+        this.skippingQuestionPossible = false;
+        if (!this.question.skipTimer) {
+            if (this.question.type === QuestionType.CHECK_IN_AND_OUT) {
+                this.question.skipTimer = 75;
+            } else {
+                this.question.skipTimer = 30;
+            }
+        }
+        this.calcTimeRemainingForSkip(this.question.skipTimer);
+        setTimeout(() => {
+            this.skippingQuestionPossible = true;
+        }, this.question.skipTimer * 1000);
     }
 
     public isCheckboxType() {
@@ -67,6 +85,10 @@ export class QuestionComponent implements OnInit, OnChanges {
         return this.question.type === QuestionType.AL_PACO_RACE;
     }
 
+    public isCheckInAndOut() {
+        return this.question.type === QuestionType.CHECK_IN_AND_OUT;
+    }
+
     public questionAnsweredCorrectly() {
         if (!this.submitted) {
             this.submitted = true;
@@ -87,18 +109,32 @@ export class QuestionComponent implements OnInit, OnChanges {
         if (this.errorPenalty) {
             return;
         }
-        console.log('called');
         if (wrongAnswerSpecial) {
             this.wrongAnswerSpecial = wrongAnswerSpecial;
         }
-        console.log('test');
         this.errorPenalty = true;
-        console.log(this.errorPenalty);
         this.countErrorTime(this.question.wrongAnswerPenalty);
         setTimeout(() => {
-            console.log('resetting error penalty');
             this.errorPenalty = false;
         }, this.question.wrongAnswerPenalty * 1000);
+    }
+
+    public skipQuestion() {
+        if (!this.skippingQuestionPossible) {
+            return;
+        }
+        this.apiClient.skipAnswer(this.lobby, this.userToken, this.question.uuid).subscribe((res: any) => {
+            this.questionAnsweredCorrectly();
+        });
+    }
+
+    private calcTimeRemainingForSkip(time: number) {
+        this.timeRemainingForSkip = time;
+        if (this.timeRemainingForSkip > 0) {
+            setTimeout(() => {
+                this.calcTimeRemainingForSkip(time - 1);
+            }, 1000);
+        }
     }
 
     private countErrorTime(timeInSeconds: number) {

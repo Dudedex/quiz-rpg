@@ -25,6 +25,10 @@ export class RadioAndCheckboxEditorComponent implements OnInit {
         return this.question.type === QuestionType.RADIO;
     }
 
+    public isCheckInAndOut() {
+        return this.question.type === QuestionType.CHECK_IN_AND_OUT;
+    }
+
     public addQuestionAnswerOption() {
         this.question.options.push(QuizManagerHelper.getDummyAnswer());
     }

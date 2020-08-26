@@ -48,6 +48,10 @@ export class EditQuestionComponent implements OnInit {
             key: QuestionType.AL_PACO_RACE,
             displayValue: 'Al-Paco Rennen'
         });
+        this.questionTypeOptions.push({
+            key: QuestionType.CHECK_IN_AND_OUT,
+            displayValue: 'Al-Paco Hotel'
+        });
         if (this.question) {
             this.selectQuestionType(this.questionTypeOptions.find(to => to.key === this.question.type));
         }
@@ -78,10 +82,13 @@ export class EditQuestionComponent implements OnInit {
         return this.question.type === QuestionType.AL_PACO_RACE;
     }
 
+    public isCheckInAndOut() {
+        return this.question.type === QuestionType.CHECK_IN_AND_OUT;
+    }
+
     public validateQuestionAndSubmit() {
         this.errorsWithQuestion = [];
         if (!this.questionIsValid()) {
-            console.log('ERROR');
             if (!(this.question.title
                 && this.question.title.trim() !== '')) {
                 this.errorsWithQuestion.push(QuestionError.TITLE_INVALID);

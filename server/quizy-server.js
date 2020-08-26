@@ -10,6 +10,7 @@ const TYPE_RADIO = 'RADIO';
 const TYPE_IMAGESEARCH = 'IMAGE_SEARCH';
 const TYPE_DRAG_AND_DROP = 'DRAG_AND_DROP';
 const TYPE_AL_PACO_RACE = 'AL_PACO_RACE';
+const TYPE_CHECK_IN_AND_OUT = 'CHECK_IN_AND_OUT';
 
 var app = express();
 var port = 3000;
@@ -153,7 +154,7 @@ app.post('/:gameId/checkAnswer', bodyParser.json(), function (req, res) {
         return;
     }
     const question = questionIdToQuestionMap[gameId][questionId];
-    if (question.type === TYPE_RADIO) {
+    if (question.type === TYPE_RADIO || question.type === TYPE_CHECK_IN_AND_OUT) {
         checkRadioQuestion(question, gameId, answerIds, userToken, res);
     }
     if (question.type === TYPE_CHECKBOX) {
@@ -169,6 +170,49 @@ app.post('/:gameId/checkAnswer', bodyParser.json(), function (req, res) {
         checkNotFailableQuestion(question, gameId, userToken, res);
     }
     res.status(400).send();
+});
+
+app.post('/:gameId/skipAnswer', bodyParser.json(), function (req, res) {
+    const gameId = req.params.gameId;
+    const questionId = req.body.questionId;
+    const userToken = req.body.userToken;
+    if (gameId === undefined
+        || games[gameId] === undefined
+        || questionId === undefined
+        || userToken === undefined
+        || userTokens[userToken] === undefined
+        || questionIdToQuestionMap[gameId] === undefined
+        || questionIdToQuestionMap[gameId][questionId] === undefined) {
+        console.log('skipAnswer => precheck failed for game ' + gameId);
+        res.status(400).send();
+        return;
+    }
+    const question = questionIdToQuestionMap[gameId][questionId];
+    const username = userTokens[userToken];
+    const progress = games[gameId].questionProgress[username];
+    var gameRunningSince;
+    var skipTimeForQuestion = question.skipTimer;
+    if (!skipTimeForQuestion) {
+        if (question.type === TYPE_CHECK_IN_AND_OUT) {
+            skipTimeForQuestion = 75;
+        } else {
+            skipTimeForQuestion = 30;
+        }
+    }
+    if (!progress || progress.length === 0) {
+        gameRunningSince = (Date.now() - games[gameId].startTime) / 1000;
+    } else {
+        const lastQuestionAnswer = progress[progress.length-1];
+        gameRunningSince = (Date.now() - lastQuestionAnswer.time) / 1000;
+
+    }
+    if (gameRunningSince < skipTimeForQuestion) {
+        console.error('Player "' + username + '" tried to skip a question to early')
+        res.status(401).send();
+        return;
+    }
+    trackProgress(gameId, userToken, question, true);
+    res.status(200).send();
 });
 
 app.post('/:gameId/finished', bodyParser.json(), function (req, res) {

@@ -1,16 +1,14 @@
 import {Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, SimpleChanges} from '@angular/core';
-import {Question} from '../../models/question';
-import {AreaData} from '../../models/area-data';
-import {QuestionType} from '../../models/question-type';
-import {ApiClientService} from '../../api-client.service';
+import {Question} from '../../../models/question';
+import {AreaData} from '../../../models/area-data';
+import {QuestionType} from '../../../models/question-type';
+import {ApiClientService} from '../../../api-client.service';
 
 @Component({
     selector: 'app-image-search-question',
     templateUrl: './image-search-question.component.html'
 })
-export class ImageSearchQuestionComponent implements OnChanges {
-
-    static IMAGE_SEARCH_SKIP_TIME = 30;
+export class ImageSearchQuestionComponent {
 
     @ViewChild('image') public image: ElementRef;
 
@@ -27,21 +25,8 @@ export class ImageSearchQuestionComponent implements OnChanges {
     public questionAnsweredCorrectly = new EventEmitter();
 
     public IMAGE_CONTAINER_MAX_WIDTH = 420;
-    public skippingImageSearchPossible: boolean;
-    public timeRemainingForSkip: number;
 
     constructor(private apiClient: ApiClientService) {
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        this.timeRemainingForSkip = undefined;
-        this.skippingImageSearchPossible = false;
-        if (this.question.type === QuestionType.IMAGE_SEARCH) {
-            this.calcTimeRemainingForSkip(ImageSearchQuestionComponent.IMAGE_SEARCH_SKIP_TIME);
-            setTimeout(() => {
-                this.skippingImageSearchPossible = true;
-            }, ImageSearchQuestionComponent.IMAGE_SEARCH_SKIP_TIME * 1000);
-        }
     }
 
     public getCordsForArea(area: AreaData) {
@@ -60,16 +45,6 @@ export class ImageSearchQuestionComponent implements OnChanges {
         return '';
     }
 
-    public skipImageSerch() {
-        if (!this.skippingImageSearchPossible) {
-            return;
-        }
-        this.apiClient.checkAnswer(this.lobby, this.userToken, this.question.uuid, []).subscribe((res: any) => {
-            // no chance to fail
-            this.questionAnsweredCorrectly.emit();
-        });
-    }
-
     public areaClicked(area: AreaData) {
         area.checked = true;
         if (this.question.imageSearch.areaData.findIndex(ad => !ad.checked) === -1) {
@@ -79,14 +54,4 @@ export class ImageSearchQuestionComponent implements OnChanges {
             });
         }
     }
-
-    private calcTimeRemainingForSkip(time: number) {
-        this.timeRemainingForSkip = time;
-        if (this.timeRemainingForSkip > 0) {
-            setTimeout(() => {
-                this.calcTimeRemainingForSkip(time - 1);
-            }, 1000);
-        }
-    }
-
 }

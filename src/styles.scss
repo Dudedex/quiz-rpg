@@ -101,6 +101,14 @@
   touch-action: manipulation;
 }
 
+.check-in-and-out-container {
+  position: relative;
+  width: 100%;
+  height: 303px;
+  overflow-x: hidden;
+  border-bottom: 3px solid #aaaaaa;
+}
+
 img[usemap] {
   border: none;
   height: auto;

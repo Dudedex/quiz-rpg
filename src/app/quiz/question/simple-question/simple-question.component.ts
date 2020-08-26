@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {QuestionType} from '../../models/question-type';
-import {Question} from '../../models/question';
-import {ApiClientService} from '../../api-client.service';
-import {AnswerOption} from '../../models/answer-option';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {QuestionType} from '../../../models/question-type';
+import {Question} from '../../../models/question';
+import {ApiClientService} from '../../../api-client.service';
+import {AnswerOption} from '../../../models/answer-option';
 
 @Component({
     selector: 'app-simple-question',
@@ -18,7 +18,6 @@ export class SimpleQuestionComponent {
     public userToken: string;
     @Input()
     public errorPenalty: boolean;
-
     @Output()
     public questionAnsweredCorrectly = new EventEmitter();
 
@@ -34,6 +33,10 @@ export class SimpleQuestionComponent {
 
     public isRadioType() {
         return this.question.type === QuestionType.RADIO;
+    }
+
+    public isCheckInAndCheckOut() {
+        return this.question.type === QuestionType.CHECK_IN_AND_OUT;
     }
 
     public checkRadioOption(selectedAnswer: AnswerOption) {

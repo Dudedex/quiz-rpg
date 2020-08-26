@@ -5,7 +5,7 @@
             {{option.text}}
         </label>
     </ng-container>
-    <ng-container *ngIf="isRadioType()">
+    <ng-container *ngIf="isRadioType() || isCheckInAndCheckOut()">
         <button class="btn btn-info w-100 mt-2" (click)="checkRadioOption(option)">
             {{option.text}}
         </button>

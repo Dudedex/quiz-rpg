@@ -24,6 +24,13 @@ export class ApiClientService {
         });
     }
 
+    public skipAnswer(lobby: string, userToken: string, questionId: string) {
+        return this.httpClient.post(ApiClientService.BASE_PATH  + ApiClientService.streamLineLobby(lobby) + 'skipAnswer', {
+            userToken,
+            questionId
+        });
+    }
+
     public quizFinished(lobby: string, object: any) {
         return this.httpClient.post(ApiClientService.BASE_PATH + ApiClientService.streamLineLobby(lobby) + 'finished', object);
     }

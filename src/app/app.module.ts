@@ -2,7 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
-import {QuestionComponent} from './question/question.component';
+import {QuestionComponent} from './quiz/question/question.component';
 import {QuizComponent} from './quiz/quiz.component';
 import {FormsModule} from '@angular/forms';
 import {ApiClientService} from './api-client.service';
@@ -17,14 +17,15 @@ import { ImageSearchEditorComponent } from './quiz-manager/edit-quiz/image-searc
 import { RadioAndCheckboxEditorComponent } from './quiz-manager/edit-quiz/radio-and-checkbox-editor/radio-and-checkbox-editor.component';
 import { DragAndDropEditorComponent } from './quiz-manager/edit-quiz/drag-and-drop-editor/drag-and-drop-editor.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
-import { ImageSearchQuestionComponent } from './question/image-search-question/image-search-question.component';
-import { DragAndDropComponent } from './question/drag-and-drop/drag-and-drop.component';
+import { ImageSearchQuestionComponent } from './quiz/question/image-search-question/image-search-question.component';
+import { DragAndDropComponent } from './quiz/question/drag-and-drop/drag-and-drop.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
-import { RunGameComponent } from './question/run-game/run-game.component';
+import { RunGameComponent } from './quiz/question/run-game/run-game.component';
 import { AlPacoRaceComponent } from './quiz-manager/edit-quiz/al-paco-race/al-paco-race.component';
-import { CheckInComponent } from './question/check-in/check-in.component';
+import { CheckInComponent } from './quiz/question/check-in/check-in.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { SimpleQuestionComponent } from './question/simple-question/simple-question.component';
+import { SimpleQuestionComponent } from './quiz/question/simple-question/simple-question.component';
+import { CheckInEditorComponent } from './quiz-manager/edit-quiz/check-in-editor/check-in-editor.component';
 
 @NgModule({
     declarations: [
@@ -43,7 +44,8 @@ import { SimpleQuestionComponent } from './question/simple-question/simple-quest
         RunGameComponent,
         AlPacoRaceComponent,
         CheckInComponent,
-        SimpleQuestionComponent
+        SimpleQuestionComponent,
+        CheckInEditorComponent
     ],
     imports: [
         BrowserModule,

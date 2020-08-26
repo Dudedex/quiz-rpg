@@ -35,6 +35,23 @@
                 (questionAnsweredCorrectly)="questionAnsweredCorrectly()"
                 (questionAnsweredFalse)="startErrorTimer($event)"></app-simple-question>
     </ng-container>
+    <ng-container *ngIf="isCheckInAndOut()">
+        <app-check-in
+                [lobby]="lobby"
+                [userToken]="userToken"
+                [errorPenalty]="errorPenalty"
+                [question]="question"
+                (questionAnsweredCorrectly)="questionAnsweredCorrectly()"
+                (questionAnsweredFalse)="startErrorTimer($event)">
+        </app-check-in>
+    </ng-container>
+
+    <button class="btn mt-5 btn-secondary mt-2 w-100"
+            *ngIf="!isCheckInAndOut() && !isAlPacoRace()"
+            [disabled]="timeRemainingForSkip > 0"
+            (click)="skipQuestion()">
+        Frage überspringen {{timeRemainingForSkip > 0 ? '(' + timeRemainingForSkip + ')': ''}}
+    </button>
 	<ngb-alert class="overlay-hint" [type]="'danger'" *ngIf="errorPenalty" [dismissible]="false">
 		<h3>
 			Falsche Antwort!

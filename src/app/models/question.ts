@@ -11,8 +11,11 @@ export class Question {
     public checkInFlows: CheckInFlows[] = [];
     public imageSearch: ImageSearch;
     public wrongAnswerHint: string;
-    public wrongAnswerPenalty = 8;
+    public wrongAnswerPenalty: number;
     public rigthAnswerSequel: string;
-    public rightAnswerScreenTime = 3;
-    public requiredSteps = 100;
+    public rightAnswerScreenTime: number;
+    public requiredSteps: number;
+    public skipTimer: number;
+    public introTimer: number;
+    public intro: string;
 }

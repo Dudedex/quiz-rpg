@@ -1,0 +1,23 @@
+<h5>Intro text</h5>
+<textarea [(ngModel)]="question.intro" class="w-100" rows="10"></textarea>
+<div>
+    Anzeigezeit für Intro: <input type="number" min="0" max="8" step="1" [(ngModel)]="question.introTimer">
+</div>
+<h5>Wellen</h5>
+<div class="content" *ngFor="let checkInFlow of question.checkInFlows">
+    <label class="btn btn-info w-100 text-left">
+        Check In
+        <input type="number" min="0" max="8" step="1" [(ngModel)]="checkInFlow.in">
+        Check Out
+        <input type="number" min="0" max="8" step="1" [(ngModel)]="checkInFlow.out">
+        <button class="btn btn-secondary right pl-1 pr-1 pt-0 pb-0" (click)="deleteAnswerOption(i)">X</button>
+    </label>
+</div>
+<button class="btn btn-primary w-100" (click)="addFlowEntry()">Neue Welle hinzufügen</button>
+<div>
+    Richtiges Ergebnis {{getCorrectAnswer()}}
+</div>
+<hr>
+<app-radio-and-checkbox-editor
+    [question]="question">
+</app-radio-and-checkbox-editor>

@@ -1,13 +1,13 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Question} from '../../models/question';
+import {Question} from '../../../models/question';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {ApiClientService} from '../../api-client.service';
+import {ApiClientService} from '../../../api-client.service';
 
 @Component({
     selector: 'app-drag-and-drop',
     templateUrl: './drag-and-drop.component.html'
 })
-export class DragAndDropComponent implements OnChanges {
+export class DragAndDropComponent {
 
     @Input()
     public question: Question;
@@ -28,9 +28,6 @@ export class DragAndDropComponent implements OnChanges {
     public questionAnsweredFalse = new EventEmitter();
 
     constructor(private apiClient: ApiClientService) {
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
     }
 
     public drop(event: CdkDragDrop<string[]>) {

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {Question} from '../../models/question';
-import {ApiClientService} from '../../api-client.service';
+import {Question} from '../../../models/question';
+import {ApiClientService} from '../../../api-client.service';
 
 @Component({
     selector: 'app-run-game',
@@ -41,6 +41,9 @@ export class RunGameComponent implements OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        if (!changes.question) {
+            return;
+        }
         this.steps = 0;
         this.timeInSecondsTillStart = undefined;
         this.currentImage = this.runArray[1];
