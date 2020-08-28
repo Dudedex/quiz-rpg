@@ -6,6 +6,7 @@
     [width]="IMAGE_CONTAINER_MAX_WIDTH"
     [src]="question.imageSearch.imageData"
     [alt]="'picture'"
+    (click)="countTillBreak()"
     usemap="#areaMap">
 
 <map id="map_id" name="areaMap">
@@ -17,3 +18,20 @@
               href="javascript:;">
     </ng-container>
 </map>
+
+<ngb-alert class="overlay-hint" *ngIf="errorPenalty" [type]="'danger'" [dismissible]="false">
+    <div class="text-center">
+        <h3>
+            Ein ganz schneller klicker! Ne?
+        </h3>
+        <div class="mt-3">
+            Jetzt erstmal kurz Pause
+        </div>
+        <div class="mt-3">
+            <div>Es geht weiter in:</div>
+            <div>
+                <h4>{{wrongClickPenalty}}</h4>
+            </div>
+        </div>
+    </div>
+</ngb-alert>

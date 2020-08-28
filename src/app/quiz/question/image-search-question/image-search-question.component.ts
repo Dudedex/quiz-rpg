@@ -25,6 +25,11 @@ export class ImageSearchQuestionComponent {
     public questionAnsweredCorrectly = new EventEmitter();
 
     public IMAGE_CONTAINER_MAX_WIDTH = 420;
+    public wrongClickPenalty: number;
+    public errorPenalty: boolean;
+
+    private breakCounter = 0;
+
 
     constructor(private apiClient: ApiClientService) {
     }
@@ -46,12 +51,38 @@ export class ImageSearchQuestionComponent {
     }
 
     public areaClicked(area: AreaData) {
+        if (this.errorPenalty) {
+            return;
+        }
         area.checked = true;
+        this.breakCounter = 0;
         if (this.question.imageSearch.areaData.findIndex(ad => !ad.checked) === -1) {
             this.apiClient.checkAnswer(this.lobby, this.userToken, this.question.uuid, []).subscribe((res: any) => {
                 // no chance to fail
                 this.questionAnsweredCorrectly.emit();
             });
         }
+    }
+
+    public countTillBreak() {
+        this.breakCounter += 1;
+        if (this.breakCounter > 2) {
+            this.breakCounter = 0;
+            this.errorPenalty = true;
+            this.countTimeInSeconds(3);
+            setTimeout(() => {
+                this.errorPenalty = false;
+            }, 3000);
+        }
+    }
+
+    private countTimeInSeconds(time) {
+        if (time <= 0) {
+            return;
+        }
+        this.wrongClickPenalty = time;
+        setTimeout(() => {
+            this.countTimeInSeconds(time - 1);
+        }, 999);
     }
 }
