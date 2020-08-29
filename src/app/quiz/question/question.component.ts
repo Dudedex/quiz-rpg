@@ -32,6 +32,7 @@ export class QuestionComponent implements OnInit, OnChanges {
     public showRightAnswersHint: boolean;
     public wrongAnswerSpecial: string;
 
+    private skipTimeSubscription: any;
     private submitted: boolean;
 
     constructor(private apiClient: ApiClientService) {
@@ -59,7 +60,8 @@ export class QuestionComponent implements OnInit, OnChanges {
                 this.question.skipTimer = 30;
             }
         }
-        this.calcTimeRemainingForSkip(this.question.skipTimer);
+        this.timeRemainingForSkip = this.question.skipTimer;
+        this.calcTimeRemainingForSkip();
         setTimeout(() => {
             this.skippingQuestionPossible = true;
         }, this.question.skipTimer * 1000);
@@ -93,6 +95,7 @@ export class QuestionComponent implements OnInit, OnChanges {
         if (!this.submitted) {
             this.submitted = true;
             if (this.question.rigthAnswerSequel) {
+                this.timeRemainingForSkip = 0;
                 this.showRightAnswersHint = true;
                 this.countSuccessSequelTime(this.question.rightAnswerScreenTime);
                 setTimeout(() => {
@@ -128,13 +131,13 @@ export class QuestionComponent implements OnInit, OnChanges {
         });
     }
 
-    private calcTimeRemainingForSkip(time: number) {
-        this.timeRemainingForSkip = time;
-        if (this.timeRemainingForSkip > 0) {
-            setTimeout(() => {
-                this.calcTimeRemainingForSkip(time - 1);
-            }, 1000);
-        }
+    private calcTimeRemainingForSkip() {
+        this.skipTimeSubscription = setInterval(() => {
+            this.timeRemainingForSkip = this.timeRemainingForSkip - 1;
+            if (this.timeRemainingForSkip <= 0) {
+                clearInterval(this.skipTimeSubscription);
+            }
+        }, 1000);
     }
 
     private countErrorTime(timeInSeconds: number) {
